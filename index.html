@@ -1,0 +1,3102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LapPort | Surgical Port Placement Curriculum & Instructor Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .port-marker {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .port-marker:hover {
+      transform: translate(-50%, -50%) scale(1.25);
+      z-index: 30;
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 0.45; }
+    }
+    .organ-pulse {
+      animation: pulse-slow 3s infinite ease-in-out;
+    }
+    .or-node {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @media print {
+      header, .no-print { display: none !important; }
+      body { background: #0f172a !important; color: #f8fafc !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+  <!-- ========================================================================= -->
+  <!-- TOP HEADER & ROLE SELECTOR                                                -->
+  <!-- ========================================================================= -->
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-3.5 space-y-3">
+    <div class="flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+        <h1 class="text-xl font-bold tracking-tight text-white">LapPort <span class="text-slate-400 font-normal text-sm">| Surgical Education & Cohort Analytics</span></h1>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Trainee Identity Badge -->
+        <div id="traineeHeaderBadge" class="hidden items-center gap-2 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
+          <span class="text-slate-400">Trainee:</span>
+          <span id="headerTraineeName" class="font-bold text-emerald-400"></span>
+        </div>
+
+        <!-- Student vs Teacher Navigation Switcher -->
+        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700">
+          <button id="navStudentSectionBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow">
+            🎓 Student Section
+          </button>
+          <button id="navTeacherSectionBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white flex items-center gap-1.5">
+            <span>🔒 Teacher Section</span>
+          </button>
+        </div>
+
+        <!-- Free Sandbox Mode Toggle -->
+        <button id="toggleSandboxBtn" class="text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+          🔓 Free Sandbox
+        </button>
+      </div>
+    </div>
+
+    <!-- Student Curriculum Progress Stepper -->
+    <div id="curriculumStepper" class="grid grid-cols-2 md:grid-cols-6 gap-2 pt-1">
+      <div id="stagePill_1" class="p-2 rounded-lg border text-xs bg-emerald-600/20 border-emerald-500 text-white font-semibold">
+        <div class="text-[10px] font-mono text-emerald-300">Stage 1</div>
+        <div class="truncate">1. Registration</div>
+      </div>
+      <div id="stagePill_2" class="p-2 rounded-lg border text-xs bg-slate-900/60 border-slate-700 text-slate-400">
+        <div class="text-[10px] font-mono text-slate-500">Stage 2</div>
+        <div class="truncate">2. Blinded Pre-Test</div>
+      </div>
+      <div id="stagePill_3" class="p-2 rounded-lg border text-xs bg-slate-900/60 border-slate-700 text-slate-400">
+        <div class="text-[10px] font-mono text-slate-500">Stage 3</div>
+        <div class="truncate">3. Theory & OR Setup</div>
+      </div>
+      <div id="stagePill_4" class="p-2 rounded-lg border text-xs bg-slate-900/60 border-slate-700 text-slate-400">
+        <div class="text-[10px] font-mono text-slate-500">Stage 4</div>
+        <div class="truncate">4. Guided Walkthrough</div>
+      </div>
+      <div id="stagePill_5" class="p-2 rounded-lg border text-xs bg-slate-900/60 border-slate-700 text-slate-400">
+        <div class="text-[10px] font-mono text-slate-500">Stage 5</div>
+        <div class="truncate">5. Post-Training Exam</div>
+      </div>
+      <div id="stagePill_6" class="p-2 rounded-lg border text-xs bg-slate-900/60 border-slate-700 text-slate-400">
+        <div class="text-[10px] font-mono text-slate-500">Stage 6</div>
+        <div class="truncate">6. Results & Export</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- TEACHER SECTION: PASSWORD AUTHENTICATION MODAL & DASHBOARD                -->
+  <!-- ========================================================================= -->
+  <section id="teacherAuthSection" class="hidden max-w-md mx-auto p-6 mt-12">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-7 shadow-2xl space-y-5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-lg border border-amber-500/30">
+          🔒
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-white">Teacher & Instructor Portal</h2>
+          <p class="text-xs text-slate-400">Authorized surgical educators only</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Enter Instructor Access Password</label>
+          <input type="password" id="teacherPasswordInput" placeholder="Enter password..." class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm">
+        </div>
+        <div id="authLockoutMsg" class="hidden text-xs text-rose-300 bg-rose-950/70 border border-rose-500/40 p-3 rounded-lg leading-relaxed"></div>
+      </div>
+
+      <div class="flex gap-2.5">
+        <button id="loginTeacherBtn" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 px-4 rounded-xl shadow transition text-xs">
+          Verify & Log In →
+        </button>
+        <button id="cancelTeacherAuthBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-2.5 px-4 rounded-xl transition text-xs">
+          Cancel
+        </button>
+      </div>
+
+      <div class="text-[11px] text-slate-500 border-t border-slate-700 pt-3">
+        <strong class="text-slate-400">Security Safeguards:</strong> Protected by PBKDF2 SHA-256 cryptographic key derivation (with automatic fallback for local `file://` origins), 5-attempt brute-force lockout protection, and 30-minute session expiry.
+      </div>
+    </div>
+  </section>
+
+  <!-- TEACHER DASHBOARD VIEW (AFTER AUTHENTICATION) -->
+  <section id="teacherDashboardSection" class="hidden max-w-7xl mx-auto p-6 space-y-6">
+    <div class="bg-gradient-to-r from-slate-800 via-slate-800 to-amber-950/60 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-bold uppercase tracking-wider">Instructor Administration</span>
+          <span id="sessionTimerBadge" class="text-[11px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-700">Session active: 30m</span>
+        </div>
+        <h2 class="text-2xl font-bold text-white mt-1">Student Cohort Performance & Data Repository</h2>
+        <p class="text-xs text-slate-300 mt-1">Review student cohorts, analyze learning gains, and download complete data sets directly formatted for Microsoft Excel.</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="exportMasterCsvBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+          <span>📊 Download Master Cohort (Excel/CSV)</span>
+        </button>
+        <button id="exportMasterJsonBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition">
+          💾 Export JSON
+        </button>
+        <button id="seedSampleDataBtn" class="bg-slate-700 hover:bg-slate-600 text-sky-300 border border-sky-500/30 font-semibold text-xs px-3.5 py-2.5 rounded-xl transition">
+          + Add Demo Student Row
+        </button>
+        <button id="clearCohortDataBtn" class="bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-semibold text-xs px-3.5 py-2.5 rounded-xl transition">
+          Clear Data
+        </button>
+        <button id="logoutTeacherBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl border border-slate-600 transition">
+          Log Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Cohort Summary Metrics -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+        <div class="text-xs text-slate-400 font-semibold uppercase">Total Students Recorded</div>
+        <div id="cohortTotalStudents" class="text-3xl font-bold font-mono text-white mt-1.5">0</div>
+        <div class="text-[11px] text-slate-400 mt-1">Stored in persistent browser repository</div>
+      </div>
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+        <div class="text-xs text-slate-400 font-semibold uppercase">Cohort Mean Accuracy Gain</div>
+        <div id="cohortMeanGain" class="text-3xl font-bold font-mono text-emerald-400 mt-1.5">+0.0%</div>
+        <div class="text-[11px] text-slate-400 mt-1">Pre-Test vs. Post-Exam (Δ)</div>
+      </div>
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+        <div class="text-xs text-slate-400 font-semibold uppercase">Mean Spatial Error Reduction</div>
+        <div id="cohortMeanErrReduction" class="text-3xl font-bold font-mono text-sky-400 mt-1.5">-0.0%</div>
+        <div class="text-[11px] text-slate-400 mt-1">Reduction in distance from target</div>
+      </div>
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+        <div class="text-xs text-slate-400 font-semibold uppercase">Mean Confidence Shift</div>
+        <div id="cohortMeanConfGain" class="text-3xl font-bold font-mono text-amber-400 mt-1.5">+0.0 pts</div>
+        <div class="text-[11px] text-slate-400 mt-1">Baseline vs. Post-course rating (1–10)</div>
+      </div>
+    </div>
+
+    <!-- Cohort Data Table -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex flex-wrap justify-between items-center gap-3">
+        <h3 class="text-base font-bold text-white">Individual Trainee Records & Performance Breakdown</h3>
+        <span class="text-xs text-slate-400">Click "CSV" on any row to export that trainee's individual Excel spreadsheet</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400 uppercase">
+              <th class="py-3 px-3">Date/Time</th>
+              <th class="py-3 px-3">Trainee Name</th>
+              <th class="py-3 px-3">Training Grade</th>
+              <th class="py-3 px-3">Pre-Test Acc</th>
+              <th class="py-3 px-3">Post-Exam Acc</th>
+              <th class="py-3 px-3">Gain (Δ)</th>
+              <th class="py-3 px-3">Confidence Shift</th>
+              <th class="py-3 px-3">Theory Quiz</th>
+              <th class="py-3 px-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cohortTableBody" class="divide-y divide-slate-700/60 text-slate-200"></tbody>
+        </table>
+      </div>
+    </div>
+
+<!-- Anonymous Feedback Data Table -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4 mt-6">
+      <div class="flex flex-wrap justify-between items-center gap-3">
+        <div>
+          <h3 class="text-base font-bold text-white">Anonymous Trainee Feedback</h3>
+          <span class="text-xs text-slate-400">Decoupled from trainee identity for QI evaluation</span>
+        </div>
+        <button id="exportFeedbackCsvBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+          <span>💬 Download Feedback (CSV)</span>
+        </button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400 uppercase">
+              <th class="py-3 px-3 w-24">Date</th>
+              <th class="py-3 px-3 w-32">Rating</th>
+              <th class="py-3 px-3">Comments</th>
+            </tr>
+          </thead>
+          <tbody id="feedbackTableBody" class="divide-y divide-slate-700/60 text-slate-200"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- STAGE 1: TRAINEE REGISTRATION & BASELINE INTAKE (STUDENT SECTION)         -->
+  <!-- ========================================================================= -->
+  <section id="registrationView" class="max-w-2xl mx-auto p-6 mt-6">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl space-y-6">
+      <div>
+        <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold uppercase tracking-wider">Stage 1 of 6 • Baseline Intake</span>
+        <h2 class="text-2xl font-bold text-white mt-3">Surgical Trainee Registration & Perceived Knowledge</h2>
+        <p class="text-sm text-slate-300 mt-1 leading-relaxed">
+          Welcome to the structured laparoscopic port placement curriculum. You will complete a <strong>Blinded Baseline Pre-Test</strong> across 5 core procedures, work through the <strong>Theory & OR Ergonomics Course</strong>, review the <strong>Guided Walkthrough</strong>, and finish with a <strong>Post-Training Exam</strong> to measure your objective and perceived learning gains.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Full Name / Trainee Identifier *</label>
+          <input type="text" id="traineeNameInput" placeholder="e.g., Dr. Sarah Connor" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Current Training Stage</label>
+          <select id="traineeRoleInput" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+            <option value="Medical Student">Medical Student</option>
+            <option value="Foundation / Intern (FY1–FY2)">Foundation / Intern (FY1–FY2)</option>
+            <option value="Core Surgical Trainee (CST / Junior Resident)">Core Surgical Trainee (CST / Junior Resident)</option>
+            <option value="Higher Surgical Trainee (SpR / Senior Resident)">Higher Surgical Trainee (SpR / Senior Resident)</option>
+            <option value="Surgical First Assistant / Theatre Nurse">Surgical First Assistant / Theatre Nurse</option>
+          </select>
+        </div>
+        <!-- NEW: Longitudinal Retention Toggle -->
+    <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" id="isFollowUpTest" class="w-5 h-5 rounded accent-indigo-500">
+        <div>
+          <div class="text-sm font-bold text-indigo-300">This is a 4-Week / 12-Week Follow-Up Assessment</div>
+          <div class="text-xs text-slate-400">Check this box if you are returning to test your retention. This skips the learning modules.</div>
+        </div>
+      </label>
+    </div>
+        
+        <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-5 space-y-3">
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-semibold uppercase tracking-wider text-slate-300">Baseline Perceived Knowledge & Confidence (1–10)</label>
+            <span id="preConfidenceReadout" class="text-lg font-bold font-mono text-emerald-400">5 / 10</span>
+          </div>
+          <input type="range" id="preConfidenceSlider" min="1" max="10" value="5" class="w-full accent-emerald-500 cursor-pointer">
+          <div class="flex justify-between text-[11px] text-slate-400">
+            <span>1 = Complete Novice</span>
+            <span>5 = Moderate Understanding</span>
+            <span>10 = Confident Independent Operator</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="regErrorMsg" class="hidden text-xs text-rose-300 bg-rose-950/60 border border-rose-500/40 p-3 rounded-lg">
+        Please enter your name before starting the baseline pre-test.
+      </div>
+
+      <button id="startPreTestBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition text-sm">
+        Begin Stage 2: Blinded Pre-Test (5 Procedures) →
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TORSO WORKSPACE VIEW (Pre-Test, Walkthrough, Post-Exam, Free Sandbox)     -->
+  <!-- ========================================================================= -->
+  <main id="simulatorView" class="hidden max-w-7xl mx-auto p-6 space-y-6">
+    
+    <div id="simStageBanner" class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex flex-wrap justify-between items-center gap-4 shadow-lg">
+      <div>
+        <span id="simBannerStageTag" class="text-xs font-bold uppercase tracking-widest text-amber-400">Stage 2 of 6 • Blinded Baseline Pre-Test</span>
+        <h2 id="simBannerTitle" class="text-lg font-bold text-white">Procedure 1 of 5: Laparoscopic Cholecystectomy</h2>
+        <p id="simBannerSub" class="text-xs text-slate-300">Place all required ports on the torso in order. No visual hints or accuracy feedback are shown during testing.</p>
+      </div>
+    
+    <!-- NEW: Live Timer Display -->
+    <div id="activeTimerBadge" class="hidden mt-2 inline-flex items-center gap-2 bg-slate-900 border border-emerald-500/50 px-3 py-1.5 rounded-lg">
+      <span class="text-xs font-bold text-slate-400">Time Elapsed:</span>
+      <span id="liveTimerDisplay" class="font-mono text-emerald-400 font-bold">00:00</span>
+    </div>
+    
+  </div>
+
+      <div id="simulatorToolbar" class="flex flex-wrap items-center gap-2.5">
+        <label class="flex items-center gap-2 text-xs font-semibold text-white cursor-pointer bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded-lg shadow transition">
+          <span>📷 Upload Photo</span>
+          <input type="file" id="bgImageInput" accept="image/*" class="hidden">
+        </label>
+        <button id="clearBgBtn" class="hidden text-xs text-rose-300 hover:text-white bg-rose-950/60 border border-rose-500/40 px-2.5 py-1.5 rounded-lg transition">
+          Clear
+        </button>
+
+        <div id="opacityControl" class="hidden items-center gap-2 bg-slate-700/80 px-3 py-1.5 rounded-lg border border-slate-600 text-xs">
+          <span class="text-slate-300">Landmarks:</span>
+          <input type="range" id="landmarkOpacity" min="0" max="100" value="75" class="w-16 accent-indigo-400 cursor-pointer">
+        </div>
+
+        <label class="flex items-center gap-1.5 text-xs text-slate-200 cursor-pointer bg-slate-700/80 px-2.5 py-1.5 rounded-lg border border-sky-500/40">
+          <input type="checkbox" id="triangulationToggle" checked class="rounded accent-sky-400">
+          <span>Triangulation</span>
+        </label>
+        <label class="flex items-center gap-1.5 text-xs text-slate-200 cursor-pointer bg-slate-700/80 px-2.5 py-1.5 rounded-lg border border-emerald-500/40">
+          <input type="checkbox" id="organToggle" checked class="rounded accent-emerald-500">
+          <span>Target Organ</span>
+        </label>
+        <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-700/60 px-2.5 py-1.5 rounded-lg border border-slate-600">
+          <input type="checkbox" id="vesselToggle" class="rounded accent-rose-500">
+          <span>Epigastric Vessels</span>
+        </label>
+        <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-700/60 px-2.5 py-1.5 rounded-lg border border-slate-600">
+          <input type="checkbox" id="coordToggle" class="rounded accent-sky-500">
+          <span>Coords</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Left Column: Interactive Torso Canvas -->
+      <div class="lg:col-span-7 flex flex-col items-center bg-slate-800/60 border border-slate-700 rounded-2xl p-6 relative shadow-xl">
+        <div id="coordDisplay" class="hidden absolute top-4 left-4 bg-slate-900/90 border border-slate-600 text-emerald-400 font-mono text-xs px-3 py-1.5 rounded-md z-30 pointer-events-none shadow">
+          Hover torso: X: --% | Y: --%
+        </div>
+
+        <div id="angleBadge" class="absolute top-4 right-4 bg-slate-900/90 border border-sky-500/50 text-sky-300 font-mono text-xs px-3 py-1.5 rounded-md z-30 pointer-events-none shadow">
+          Working Angle: --°
+        </div>
+
+        <div class="w-full flex justify-between text-xs font-bold tracking-widest text-slate-500 uppercase mb-2 px-8 mt-6">
+          <span>Patient Right</span>
+          <span>Patient Left</span>
+        </div>
+
+        <div id="torsoContainer" class="relative w-full max-w-[420px] aspect-[4/5] select-none cursor-crosshair rounded-xl overflow-hidden bg-slate-900/50">
+          <img id="customAbdomenImg" src="" alt="Abdomen Model" class="hidden absolute inset-0 w-full h-full object-cover pointer-events-none z-0" />
+
+          <svg id="anatomicalSvg" viewBox="0 0 400 500" class="relative w-full h-full drop-shadow-lg z-5">
+            <path id="svgTorsoBase" d="M 85,20 C 80,100 95,180 90,260 C 82,320 75,380 80,480 L 185,480 L 195,410 L 205,410 L 215,480 L 320,480 C 325,380 318,320 310,260 C 305,180 320,100 315,20 Z" 
+                  fill="#1e293b" stroke="#64748b" stroke-width="3" />
+
+            <g id="surfaceLandmarksGroup">
+              <circle cx="130" cy="45" r="3" fill="#475569" />
+              <circle cx="270" cy="45" r="3" fill="#475569" />
+              <line x1="200" y1="80" x2="200" y2="395" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,6" />
+
+              <path d="M 92,185 Q 155,140 200,85 Q 245,140 308,185" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />
+              <polygon points="196,82 204,82 200,96" fill="#cbd5e1" />
+              <text x="200" y="74" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">Xiphoid Process</text>
+              <text x="125" y="140" text-anchor="middle" fill="#64748b" font-size="10" transform="rotate(-32 125 140)">R Costal Margin</text>
+              <text x="275" y="140" text-anchor="middle" fill="#64748b" font-size="10" transform="rotate(32 275 140)">L Costal Margin</text>
+
+              <g id="pannusOverlay" class="hidden">
+                <path d="M 55,295 Q 200,365 345,295" fill="none" stroke="#64748b" stroke-width="2.5" stroke-dasharray="6,3" />
+                <text x="200" y="348" text-anchor="middle" fill="#94a3b8" font-size="9" font-style="italic">Panniculus / Lower Abdominal Fold</text>
+              </g>
+
+              <g id="scarOverlay" class="hidden">
+                <line x1="200" y1="150" x2="200" y2="345" stroke="#f87171" stroke-width="3.5" />
+                <path d="M 193,165 L 207,165 M 193,185 L 207,185 M 193,205 L 207,205 M 193,225 L 207,225 M 193,245 L 207,245 M 193,265 L 207,265 M 193,285 L 207,285 M 193,305 L 207,305 M 193,325 L 207,325" stroke="#fca5a5" stroke-width="1.5" />
+                <ellipse cx="200" cy="250" rx="22" ry="95" fill="#ef4444" fill-opacity="0.15" stroke="#f87171" stroke-width="1" stroke-dasharray="3,3" />
+                <text x="200" y="142" text-anchor="middle" fill="#fca5a5" font-size="9" font-weight="700">Midline Scar (Adhesion Risk)</text>
+                <circle cx="265" cy="175" r="5" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2" />
+                <text x="265" y="164" text-anchor="middle" fill="#38bdf8" font-size="9" font-weight="600">Palmer's Point</text>
+              </g>
+
+              <g id="umbilicusGroup">
+                <circle id="umbilicusCircle" cx="200" cy="255" r="7" fill="#0f172a" stroke="#cbd5e1" stroke-width="2.5" />
+                <path id="umbilicusCrease" d="M 196,253 Q 200,258 204,253" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+                <text id="umbilicusText" x="212" y="259" fill="#cbd5e1" font-size="11" font-weight="600">Umbilicus</text>
+              </g>
+
+              <circle cx="105" cy="335" r="5" fill="#38bdf8" />
+              <text x="105" y="323" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="600">R ASIS</text>
+
+              <circle cx="295" cy="335" r="5" fill="#38bdf8" />
+              <text x="295" y="323" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="600">L ASIS</text>
+
+              <path d="M 105,335 Q 150,375 200,395 Q 250,375 295,335" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="5,5" />
+              <rect x="190" y="391" width="20" height="8" rx="2" fill="#64748b" />
+              <text x="200" y="412" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="600">Pubic Symphysis</text>
+            </g>
+
+            <!-- TARGET ORGANS LAYER -->
+            <g id="targetOrgansLayer">
+              <g id="organ_chole" class="organ-pulse">
+                <path d="M 96,175 Q 150,115 225,115 L 200,150 L 95,195 Z" fill="#7f1d1d" fill-opacity="0.35" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" />
+                <path d="M 162,152 C 155,148 135,162 138,176 C 141,188 158,185 162,172 C 165,162 168,155 172,150" fill="#10b981" fill-opacity="0.45" stroke="#34d399" stroke-width="2" />
+                <circle cx="152" cy="168" r="14" fill="none" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2" />
+                <circle cx="152" cy="168" r="3" fill="#6ee7b7" />
+                <text x="150" y="200" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">Gallbladder (RUQ)</text>
+              </g>
+
+              <g id="organ_appendicectomy" class="hidden organ-pulse">
+                <path d="M 122,275 C 110,275 105,310 120,318 C 135,325 145,310 142,285" fill="#d97706" fill-opacity="0.25" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2" />
+                <path d="M 135,312 Q 152,322 156,338 Q 158,344 150,345 Q 144,344 143,335 Q 140,324 130,316" fill="#10b981" fill-opacity="0.55" stroke="#34d399" stroke-width="2" />
+                <circle cx="137" cy="308" r="14" fill="none" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2" />
+                <circle cx="137" cy="308" r="3" fill="#6ee7b7" />
+                <text x="145" y="360" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">Appendix (RIF)</text>
+              </g>
+
+              <g id="organ_inguinal_right" class="hidden organ-pulse">
+                <ellipse cx="154" cy="358" rx="28" ry="15" transform="rotate(25 154 358)" fill="#10b981" fill-opacity="0.35" stroke="#34d399" stroke-width="2" stroke-dasharray="4,2" />
+                <circle cx="145" cy="352" r="6" fill="#f43f5e" fill-opacity="0.6" stroke="#fda4af" stroke-width="1.5" />
+                <circle cx="154" cy="358" r="14" fill="none" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2" />
+                <circle cx="154" cy="358" r="3" fill="#6ee7b7" />
+                <text x="145" y="388" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">R Myopectineal Orifice</text>
+              </g>
+
+              <g id="organ_inguinal_left" class="hidden organ-pulse">
+                <ellipse cx="246" cy="358" rx="28" ry="15" transform="rotate(-25 246 358)" fill="#10b981" fill-opacity="0.35" stroke="#34d399" stroke-width="2" stroke-dasharray="4,2" />
+                <circle cx="255" cy="352" r="6" fill="#f43f5e" fill-opacity="0.6" stroke="#fda4af" stroke-width="1.5" />
+                <circle cx="246" cy="358" r="14" fill="none" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2" />
+                <circle cx="246" cy="358" r="3" fill="#6ee7b7" />
+                <text x="255" y="388" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">L Myopectineal Orifice</text>
+              </g>
+
+              <g id="organ_anterior_resection" class="hidden organ-pulse">
+                <path d="M 272,225 C 272,275 282,315 250,325 C 222,335 202,340 200,375" fill="none" stroke="#10b981" stroke-width="16" stroke-linecap="round" stroke-opacity="0.35" />
+                <path d="M 272,225 C 272,275 282,315 250,325 C 222,335 202,340 200,375" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="4,3" />
+                <circle cx="236" cy="330" r="16" fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="2,2" />
+                <circle cx="236" cy="330" r="3.5" fill="#6ee7b7" />
+                <text x="245" y="362" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">Sigmoid / Rectosigmoid</text>
+              </g>
+            </g>
+
+            <g id="epigastricVessels" class="hidden opacity-75">
+              <path d="M 145,380 Q 155,290 165,180" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
+              <path d="M 255,380 Q 245,290 235,180" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
+              <text x="148" y="230" fill="#fb7185" font-size="9" text-anchor="end">Inf. Epigastric Vessels</text>
+            </g>
+          </svg>
+
+          <svg id="linesLayer" viewBox="0 0 400 500" class="absolute inset-0 w-full h-full pointer-events-none z-10"></svg>
+          <div id="portsLayer" class="absolute inset-0 w-full h-full pointer-events-none z-20"></div>
+        </div>
+
+        <div class="w-full mt-4 pt-4 border-t border-slate-700/80 flex flex-wrap justify-center gap-4 text-xs text-slate-300">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-white inline-block"></span>
+            <span>10–12mm Port</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-amber-400 border-2 border-white inline-block"></span>
+            <span>5mm Port</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-900 inline-block"></span>
+            <span>Placed Port</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Control Panels -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <div id="selectorCard" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+          <div id="procDropdownWrapper">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Select Procedure</label>
+            <select id="procedureSelect" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-white font-medium focus:outline-none focus:border-emerald-500">
+              <option value="chole">1. Laparoscopic Cholecystectomy (4-Port)</option>
+              <option value="appendicectomy">2. Laparoscopic Appendicectomy (3-Port)</option>
+              <option value="inguinal_right">3. Right Inguinal Hernia Repair (3-Port)</option>
+              <option value="inguinal_left">4. Left Inguinal Hernia Repair (3-Port)</option>
+              <option value="anterior_resection">5. Laparoscopic Anterior Resection (4-Port)</option>
+            </select>
+          </div>
+
+          <div id="habitusDropdownWrapper">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Select Patient Habitus / Model</label>
+            <select id="patientModelSelect" class="w-full bg-slate-900 border border-indigo-500/60 rounded-xl px-4 py-2.5 text-white font-medium focus:outline-none focus:border-indigo-400">
+              <option value="standard">Standard Adult Habitus (BMI 22)</option>
+              <option value="obese">Bariatric / Obese Habitus (BMI > 40 / Pannus)</option>
+              <option value="scar">Previous Midline Laparotomy Scar</option>
+              <option value="pediatric">Pediatric / Slender Habitus</option>
+            </select>
+          </div>
+
+          <div id="patientNoteBox" class="bg-indigo-950/50 border border-indigo-500/30 rounded-xl p-3.5 text-xs text-indigo-200 leading-relaxed"></div>
+
+          <div id="sandboxModeToggleWrapper" class="hidden">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sandbox Mode</label>
+            <div class="grid grid-cols-2 bg-slate-900 p-1 rounded-xl border border-slate-700">
+              <button id="studyModeBtn" class="py-2 px-4 rounded-lg text-sm font-semibold transition bg-emerald-600 text-white shadow">Study Mode</button>
+              <button id="practiceModeBtn" class="py-2 px-4 rounded-lg text-sm font-semibold transition text-slate-400 hover:text-white">Practice Mode</button>
+            </div>
+          </div>
+
+          <p id="procedureSummary" class="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60"></p>
+        </div>
+
+        <!-- Study / Walkthrough Panel -->
+        <div id="studyPanel" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-white">Ideal Port Sites & Landmarks</h2>
+            <span id="walkthroughProgressBadge" class="text-xs font-mono bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-full">Reviewed: 1 / 5</span>
+          </div>
+          <div id="portList" class="space-y-3"></div>
+
+          <div id="walkthroughNavBox" class="pt-3 border-t border-slate-700 flex justify-between items-center gap-3">
+            <button id="walkthroughNextProcBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow transition text-xs">
+              Next Procedure in Walkthrough →
+            </button>
+          </div>
+        </div>
+
+        <!-- Blinded Practice & Exam Panel -->
+        <div id="practicePanel" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
+          <div class="flex justify-between items-center">
+            <h2 class="text-base font-bold text-white">Place Ports on Torso</h2>
+            <span id="placementCounter" class="text-xs font-mono bg-slate-900 px-3 py-1 rounded-full text-emerald-400 border border-slate-700">0 / 4 placed</span>
+          </div>
+
+          <div id="currentPromptBox" class="bg-slate-900 border border-emerald-500/40 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wider text-emerald-400 font-semibold mb-1">Port to Place Now:</div>
+            <div id="currentPortPrompt" class="text-base font-bold text-white"></div>
+            <div id="currentPortHint" class="text-xs text-slate-400 mt-1"></div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="examActionBtn" disabled class="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-semibold py-3 px-4 rounded-xl transition shadow text-sm">
+              Save & Next Procedure →
+            </button>
+            <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 px-5 rounded-xl transition text-sm">
+              Clear Ports
+            </button>
+          </div>
+
+          <div id="resultsBox" class="hidden space-y-3 pt-3 border-t border-slate-700"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<!-- ========================================================================= -->
+  <!-- PRE-TEST FEEDBACK SUMMARY PANEL                                           -->
+  <!-- ========================================================================= -->
+  <section id="preTestFeedbackView" class="hidden max-w-5xl mx-auto p-6 space-y-6 mt-6">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+        <div>
+          <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold uppercase tracking-wider">Baseline Complete</span>
+          <h2 class="text-2xl font-bold text-white mt-3">Pre-Test Placement Breakdown</h2>
+          <p class="text-sm text-slate-300 mt-1">Review your initial blind placements before starting the theory curriculum.</p>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-400 uppercase font-bold">Overall Baseline Accuracy</div>
+          <div id="feedbackOverallScore" class="text-4xl font-bold font-mono text-white">--%</div>
+        </div>
+      </div>
+      
+      <div id="feedbackProceduresContainer" class="space-y-4"></div>
+      
+      <button id="continueToTheoryBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition text-sm">
+        Continue to Stage 3: Theory & OR Setup →
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- POST-TEST FEEDBACK SUMMARY PANEL                                          -->
+  <!-- ========================================================================= -->
+  <section id="postTestFeedbackView" class="hidden max-w-5xl mx-auto p-6 space-y-6 mt-6">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+        <div>
+          <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold uppercase tracking-wider">Final Exam Complete</span>
+          <h2 class="text-2xl font-bold text-white mt-3">Post-Test Placement Breakdown</h2>
+          <p class="text-sm text-slate-300 mt-1">Review your final placements before generating your complete analytics report.</p>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-400 uppercase font-bold">Overall Final Accuracy</div>
+          <div id="feedbackPostOverallScore" class="text-4xl font-bold font-mono text-white">--%</div>
+        </div>
+      </div>
+      
+      <div id="feedbackPostProceduresContainer" class="space-y-4"></div>
+      
+      <button id="continueToAnalyticsBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition text-sm">
+        Continue to Final Analytics & Report →
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- STAGE 3: 5-PAGE THEORY MODULE (WITH INTERACTIVE OR DIAGRAM ON PAGE 3)     -->
+  <!-- ========================================================================= -->
+  <section id="theoryView" class="hidden max-w-6xl mx-auto p-6 space-y-6">
+    
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span id="moduleStepLabel" class="text-xs font-bold uppercase tracking-widest text-emerald-400">Stage 3 of 6 • Theory Module (Page 1 of 5)</span>
+          <h2 id="moduleMainTitle" class="text-2xl font-bold text-white mt-0.5">Laparoscopic vs. Open Surgery & Contraindications</h2>
+        </div>
+        <button id="skipToWalkthroughBtn" class="bg-emerald-700/40 hover:bg-emerald-600/60 text-emerald-200 text-xs font-bold px-4 py-2 rounded-xl border border-emerald-500/40 transition shrink-0">
+          Proceed to Stage 4: Procedure Walkthrough →
+        </button>
+      </div>
+
+      <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-700">
+        <div id="courseProgressBar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 20%"></div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1">
+        <button onclick="goToTheoryPage(1)" id="stepBtn_1" class="text-left p-2.5 rounded-xl border text-xs transition bg-emerald-600/20 border-emerald-500 text-white font-semibold">
+          <div class="text-[10px] text-emerald-300 font-mono">Page 1</div>
+          <div class="truncate">Lap vs. Open & Suitability</div>
+        </button>
+        <button onclick="goToTheoryPage(2)" id="stepBtn_2" class="text-left p-2.5 rounded-xl border text-xs transition bg-slate-900/60 border-slate-700 text-slate-400 hover:text-white">
+          <div class="text-[10px] text-slate-500 font-mono">Page 2</div>
+          <div class="truncate">Ergonomics & Triangulation</div>
+        </button>
+        <button onclick="goToTheoryPage(3)" id="stepBtn_3" class="text-left p-2.5 rounded-xl border text-xs transition bg-slate-900/60 border-slate-700 text-slate-400 hover:text-white">
+          <div class="text-[10px] text-slate-500 font-mono">Page 3</div>
+          <div class="truncate">Interactive OR Setup</div>
+        </button>
+        <button onclick="goToTheoryPage(4)" id="stepBtn_4" class="text-left p-2.5 rounded-xl border text-xs transition bg-slate-900/60 border-slate-700 text-slate-400 hover:text-white">
+          <div class="text-[10px] text-slate-500 font-mono">Page 4</div>
+          <div class="truncate">Access & Wall Anatomy</div>
+        </button>
+        <button onclick="goToTheoryPage(5)" id="stepBtn_5" class="text-left p-2.5 rounded-xl border text-xs transition bg-slate-900/60 border-slate-700 text-slate-400 hover:text-white">
+          <div class="text-[10px] text-slate-500 font-mono">Page 5</div>
+          <div class="truncate">Knowledge Check Quiz</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- PAGE 1: LAPAROSCOPIC VS OPEN SURGERY & CONTRAINDICATIONS -->
+    <div id="theoryPage_1" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-800 border border-emerald-500/30 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">Advantages over Open Surgery</span>
+            <span class="text-emerald-400 font-bold text-sm">✓ Benefits</span>
+          </div>
+          <h3 class="text-lg font-bold text-white">Why Choose a Minimally Invasive Approach?</h3>
+          <ul class="space-y-3 text-xs text-slate-300 leading-relaxed">
+            <li><strong class="text-white">1. Reduced Surgical Trauma & Pain:</strong> 5–12 mm incisions avoid dividing large muscle bellies, decreasing postoperative opioid analgesia requirements.</li>
+            <li><strong class="text-white">2. Preserved Pulmonary Function:</strong> Less upper abdominal pain enables deep inspiration and effective coughing, reducing basal atelectasis and pneumonia.</li>
+            <li><strong class="text-white">3. Faster Return of Bowel Function:</strong> Reduced manual bowel handling and peritoneal desiccation decreases postoperative ileus and hospital stay.</li>
+            <li><strong class="text-white">4. Lower Wound Morbidity:</strong> Lower rates of surgical site infection (SSI), wound dehiscence, incisional hernia, and long-term adhesions.</li>
+            <li><strong class="text-white">5. Magnified High-Definition View:</strong> 10–15x optical magnification illuminates deep pelvic and subphrenic anatomical planes.</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-800 border border-amber-500/30 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">Downsides & Technical Limitations</span>
+            <span class="text-amber-400 font-bold text-sm">⚠ Challenges</span>
+          </div>
+          <h3 class="text-lg font-bold text-white">Technical & Physiological Trade-Offs</h3>
+          <ul class="space-y-3 text-xs text-slate-300 leading-relaxed">
+            <li><strong class="text-white">1. Reduced Tactile Haptics:</strong> Inability to directly palpate subtle intraluminal masses or deep arterial pulses with bare fingers.</li>
+            <li><strong class="text-white">2. The Fulcrum Effect:</strong> The abdominal wall trocar acts as a pivot point—moving the surgeon's hand right moves the internal instrument tip left.</li>
+            <li><strong class="text-white">3. 2D Depth Perception & Restricted Wrist Motion:</strong> Monocular 2D screens require visual depth cues, and rigid shafts limit motion to 4 degrees of freedom.</li>
+            <li><strong class="text-white">4. Physiology of CO₂ Pneumoperitoneum:</strong> Intra-abdominal pressure (12–15 mmHg) splints the diaphragm, compresses the IVC (reducing venous return/cardiac output), and causes systemic CO₂ absorption (hypercapnia/acidosis).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 border border-rose-500/40 rounded-2xl p-6 shadow-xl space-y-4">
+        <h3 class="text-lg font-bold text-white">When Laparoscopic Surgery May Not Be Suitable</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-slate-900/90 border border-rose-500/30 rounded-xl p-4 space-y-2">
+            <div class="text-xs font-bold text-rose-300 uppercase">1. Absolute Contraindications</div>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+              <li><strong>Hemodynamic Instability / Hemorrhagic Shock:</strong> Pneumoperitoneum further reduces venous return and delays rapid hemorrhage control.</li>
+              <li><strong>Severe Cardiorespiratory Failure or Raised ICP:</strong> Inability to tolerate hypercapnia or IVC compression.</li>
+              <li><strong>Uncorrectable Coagulopathy.</strong></li>
+            </ul>
+          </div>
+          <div class="bg-slate-900/90 border border-amber-500/30 rounded-xl p-4 space-y-2">
+            <div class="text-xs font-bold text-amber-300 uppercase">2. Relative Contraindications</div>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+              <li><strong>Hostile / Frozen Abdomen:</strong> Dense pan-peritoneal adhesions from multiple prior laparotomies.</li>
+              <li><strong>Massive Bowel Distension:</strong> High-grade bowel obstruction leaves no working space and risks trocar enterotomy.</li>
+              <li><strong>Severe Bullous COPD.</strong></li>
+            </ul>
+          </div>
+          <div class="bg-slate-900/90 border border-sky-500/30 rounded-xl p-4 space-y-2">
+            <div class="text-xs font-bold text-sky-300 uppercase">3. Indications to Convert to Open</div>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+              <li><strong>Failure to Progress / Unclear Anatomy:</strong> e.g., inability to achieve the Critical View of Safety in cholecystectomy.</li>
+              <li><strong>Uncontrolled Hemorrhage or Visceral Injury.</strong></li>
+              <li><em class="text-emerald-300">Principle:</em> Conversion is sound clinical judgment, never a failure.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: ERGONOMICS & TRIANGULATION GEOMETRY -->
+    <div id="theoryPage_2" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div class="lg:col-span-6 bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-white">Interactive Triangulation Sandbox</h3>
+              <span class="text-xs font-mono text-sky-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-700">Baseball Diamond Concept</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">Drag the sliders to see how port spacing alters the <strong class="text-slate-200">Manipulation Angle (α)</strong> and <strong class="text-slate-200">Elevation Angle</strong>.</p>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 flex justify-center">
+            <svg id="sandboxSvg" viewBox="0 0 400 280" class="w-full max-w-[380px] h-auto">
+              <line x1="200" y1="20" x2="200" y2="250" stroke="#334155" stroke-width="1.5" stroke-dasharray="4,4" />
+              <circle cx="200" cy="55" r="22" fill="#10b981" fill-opacity="0.2" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3,3" />
+              <circle cx="200" cy="55" r="4" fill="#6ee7b7" />
+              <text x="200" y="25" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="700">Target Lesion (2nd Base)</text>
+
+              <line id="sbLeftLine" x1="110" y1="210" x2="200" y2="55" stroke="#38bdf8" stroke-width="3" />
+              <line id="sbRightLine" x1="290" y1="210" x2="200" y2="55" stroke="#38bdf8" stroke-width="3" />
+              <line x1="200" y1="240" x2="200" y2="55" stroke="#fb7185" stroke-width="2" stroke-dasharray="6,4" />
+
+              <circle cx="200" cy="240" r="9" fill="#f43f5e" stroke="#ffffff" stroke-width="2" />
+              <text x="200" y="265" text-anchor="middle" fill="#fda4af" font-size="10" font-weight="600">Camera Port (Home Plate)</text>
+
+              <circle id="sbLeftPort" cx="110" cy="210" r="7" fill="#fbbf24" stroke="#ffffff" stroke-width="2" />
+              <text id="sbLeftLabel" x="110" y="232" text-anchor="middle" fill="#fde68a" font-size="10" font-weight="600">L Port (3rd Base)</text>
+
+              <circle id="sbRightPort" cx="290" cy="210" r="7" fill="#fbbf24" stroke="#ffffff" stroke-width="2" />
+              <text id="sbRightLabel" x="290" y="232" text-anchor="middle" fill="#fde68a" font-size="10" font-weight="600">R Port (1st Base)</text>
+
+              <text id="sbCanvasAngle" x="200" y="115" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="700">α = 60°</text>
+            </svg>
+          </div>
+
+          <div class="space-y-4 mt-4 bg-slate-900/70 p-4 rounded-xl border border-slate-700/80">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-slate-300">Manipulation Angle (α) — Between Working Instruments:</span>
+                <span id="alphaReadout" class="font-mono font-bold text-emerald-400">60° (Optimal: 45°–75°)</span>
+              </div>
+              <input type="range" id="alphaSlider" min="20" max="110" value="60" class="w-full accent-sky-400 cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-slate-300">Elevation Angle — Instrument to Horizontal Plane:</span>
+                <span id="elevReadout" class="font-mono font-bold text-emerald-400">45° (Optimal: 30°–60°)</span>
+              </div>
+              <input type="range" id="elevSlider" min="15" max="80" value="45" class="w-full accent-indigo-400 cursor-pointer">
+            </div>
+
+            <div id="sandboxFeedback" class="text-xs p-3 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 leading-relaxed">
+              <strong>Ergonomic Sweet Spot:</strong> A 60° manipulation angle with a 30° azimuth angle on either side of the optical axis minimizes instrument clashing and prevents shoulder fatigue.
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 flex flex-col justify-between gap-4">
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+            <div class="text-xs font-bold uppercase tracking-wider text-sky-400 mb-1">The Baseball Diamond Rule</div>
+            <h4 class="text-base font-bold text-white mb-2">Optical & Instrument Triangulation</h4>
+            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+              <li><strong>Manipulation Angle (α = 45°–75°, ideal 60°):</strong> Angle between left and right working instruments. Below 30° causes handle clashing ("sword-fighting"); above 90° forces extreme shoulder abduction.</li>
+              <li><strong>Azimuth Angle (β = 15°–45°, ideal 30°):</strong> Angle between either working instrument and the optical axis of the laparoscope.</li>
+              <li><strong>1:1 Fulcrum Lever Ratio (15–20 cm to Target):</strong> Standard instruments are 30–35 cm long. Placing ports ~15 cm from the target keeps half the shaft inside and half outside.</li>
+            </ul>
+          </div>
+
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+            <div class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">Optical Physics</div>
+            <h4 class="text-base font-bold text-white mb-2">Why We Use a 30° Angled Laparoscope</h4>
+            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+              <li><strong>Looking Over & Around Structures:</strong> Rotating the light cable post 180° shifts the view from looking down into the pelvis/Calot's triangle to looking up at the anterior abdominal wall.</li>
+              <li><strong>Rule of the Light Lead:</strong> With a 30° scope, the direction of view points <em>opposite</em> the light cable post.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: INTERACTIVE OPERATING ROOM SETUP & PATIENT POSITIONING -->
+    <div id="theoryPage_3" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex flex-wrap justify-between items-center gap-3">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Interactive Theatre Layout</span>
+              <h3 class="text-base font-bold text-white">Operating Room Team, Monitors & Co-Axial Line</h3>
+            </div>
+            <select id="orDiagramSelect" class="bg-slate-900 border border-emerald-500/60 rounded-xl px-3 py-2 text-xs text-white font-semibold focus:outline-none">
+              <option value="chole">Laparoscopic Cholecystectomy (North American)</option>
+              <option value="appendicectomy">Laparoscopic Appendicectomy</option>
+              <option value="inguinal_right">Right Inguinal Hernia Repair (TAPP/TEP)</option>
+              <option value="inguinal_left">Left Inguinal Hernia Repair (TAPP/TEP)</option>
+              <option value="anterior_resection">Laparoscopic Anterior Resection (Lloyd-Davies)</option>
+            </select>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 flex justify-center">
+            <svg id="orSetupSvg" viewBox="0 0 500 380" class="w-full max-w-[480px] h-auto">
+              <rect x="10" y="10" width="480" height="360" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
+              <rect x="185" y="22" width="130" height="32" rx="6" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
+              <text x="250" y="42" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="700">ANESTHESIA (HEAD)</text>
+
+              <rect x="215" y="75" width="70" height="190" rx="10" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
+              <circle cx="250" cy="95" r="14" fill="#334155" stroke="#cbd5e1" stroke-width="1.5" />
+              <rect x="225" y="112" width="50" height="110" rx="8" fill="#334155" />
+
+              <g id="orLegsSupine">
+                <rect x="227" y="224" width="20" height="65" rx="6" fill="#334155" stroke="#64748b" stroke-width="1.5" />
+                <rect x="253" y="224" width="20" height="65" rx="6" fill="#334155" stroke="#64748b" stroke-width="1.5" />
+              </g>
+
+              <g id="orLegsLithotomy" class="hidden">
+                <path d="M 232,220 L 185,275" stroke="#334155" stroke-width="18" stroke-linecap="round" />
+                <path d="M 268,220 L 315,275" stroke="#334155" stroke-width="18" stroke-linecap="round" />
+                <circle cx="185" cy="275" r="10" fill="#0ea5e9" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1.5" />
+                <circle cx="315" cy="275" r="10" fill="#0ea5e9" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1.5" />
+                <text x="250" y="295" text-anchor="middle" fill="#38bdf8" font-size="9" font-weight="600">Lloyd-Davies Stirrups</text>
+              </g>
+
+              <text x="206" y="170" text-anchor="end" fill="#64748b" font-size="9" font-weight="700">PATIENT R</text>
+              <text x="294" y="170" text-anchor="start" fill="#64748b" font-size="9" font-weight="700">PATIENT L</text>
+
+              <line id="orSightline" x1="340" y1="165" x2="120" y2="110" stroke="#34d399" stroke-width="2.5" stroke-dasharray="6,4" />
+              <circle id="orTargetDot" cx="238" cy="145" r="7" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+
+              <g id="orMonitorMain" class="or-node">
+                <rect x="75" y="85" width="76" height="24" rx="4" fill="#0284c7" stroke="#bae6fd" stroke-width="2" />
+                <text x="113" y="101" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="700">1° MONITOR</text>
+              </g>
+
+              <g id="orMonitorSec" class="or-node">
+                <rect x="350" y="85" width="76" height="24" rx="4" fill="#0369a1" stroke="#7dd3fc" stroke-width="1.5" />
+                <text x="388" y="101" text-anchor="middle" fill="#e0f2fe" font-size="9" font-weight="600">2° MONITOR</text>
+              </g>
+
+              <g id="orSurgeonNode" class="or-node">
+                <circle cx="0" cy="0" r="22" fill="#059669" stroke="#ffffff" stroke-width="2.5" />
+                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="700">SURGEON</text>
+              </g>
+
+              <g id="orAssistantNode" class="or-node">
+                <circle cx="0" cy="0" r="20" fill="#4f46e5" stroke="#ffffff" stroke-width="2" />
+                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="700">ASSISTANT</text>
+              </g>
+
+              <g id="orNurseNode" class="or-node">
+                <circle cx="0" cy="0" r="19" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+                <text x="0" y="3" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="700">SCRUB</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Selected Procedure Setup</span>
+            <h4 id="orDetailTitle" class="text-lg font-bold text-white">Laparoscopic Cholecystectomy</h4>
+            
+            <div class="space-y-3 text-xs">
+              <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                <div class="font-bold text-emerald-400 mb-1">1. Table Tilt & Gravitational Retraction:</div>
+                <p id="orTiltText" class="text-slate-300 leading-relaxed"></p>
+              </div>
+              <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                <div class="font-bold text-sky-400 mb-1">2. Team & Monitor Co-Axial Geometry:</div>
+                <p id="orTeamText" class="text-slate-300 leading-relaxed"></p>
+              </div>
+              <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                <div class="font-bold text-amber-400 mb-1">3. Patient Safety & Pressure Care:</div>
+                <p id="orSafetyText" class="text-slate-300 leading-relaxed"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: PERITONEAL ACCESS & ABDOMINAL WALL ANATOMY -->
+    <div id="theoryPage_4" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-2.5">
+          <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">Entry Method 1</span>
+          <h4 class="text-base font-bold text-white">Hasson Open Cut-Down</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Direct cut-down through skin, umbilical stalk/linea alba, and peritoneum under direct vision. Stay sutures anchor a blunt Hasson cannula. Virtually eliminates blind retroperitoneal great-vessel injury.
+          </p>
+        </div>
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-2.5">
+          <span class="px-2.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-bold">Entry Method 2</span>
+          <h4 class="text-base font-bold text-white">Veress Needle & Palmer's Point</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Two distinct clicks (fascia, then peritoneum). Confirm with saline aspiration, hanging-drop test, and opening pressure &lt; 8 mmHg. Use <strong>Palmer's Point</strong> (3 cm below left costal margin, mid-clavicular line) after NG decompression if a midline scar exists.
+          </p>
+        </div>
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-2.5">
+          <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-bold">Entry Method 3</span>
+          <h4 class="text-base font-bold text-white">Optical Viewing Trocar</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            A 0° laparoscope inside a transparent conical tip allows real-time visual identification of each abdominal wall layer during entry. Popular in bariatric and upper-quadrant access.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <h3 class="text-base font-bold text-white">Abdominal Wall Safe Zones, Vessels & Fascial Closure</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300 leading-relaxed">
+          <ul class="list-disc pl-4 space-y-1.5">
+            <li><strong class="text-rose-300">Inferior Epigastric Vessels:</strong> Course deep to the rectus abdominis muscle (4–8 cm off midline). Place lateral working ports &gt; 6 cm from midline (lateral to the linea semilunaris) under direct vision.</li>
+            <li><strong class="text-rose-300">Superficial Vessels:</strong> Transilluminate the abdominal wall with the laparoscope before incising skin.</li>
+          </ul>
+          <ul class="list-disc pl-4 space-y-1.5">
+            <li><strong class="text-sky-300">Ilioinguinal & Iliohypogastric Nerves:</strong> Keep lower quadrant trocars ≥ 2 cm superior and medial to the ASIS to prevent chronic nerve entrapment.</li>
+            <li><strong class="text-sky-300">Fascial Closure Rule:</strong> Formally close the fascia of all ports ≥ 10 mm to prevent Richter's port-site hernia.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: CLINICAL KNOWLEDGE CHECK QUIZ -->
+    <div id="theoryPage_5" class="hidden space-y-6">
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-700 pb-4">
+          <div>
+            <h3 class="text-lg font-bold text-white">Theory Module Knowledge Check (16 Questions)</h3>
+            <p class="text-xs text-slate-400">Test your theoretical mastery before advancing to Stage 4 (Guided Procedure Walkthrough).</p>
+          </div>
+          <span id="quizScoreBadge" class="text-xs font-mono bg-slate-900 border border-slate-600 px-3 py-1.5 rounded-lg text-emerald-400">
+            Theory Quiz: 0 / 16 answered
+          </span>
+        </div>
+
+        <div id="quizContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+      </div>
+    </div>
+
+    <!-- Bottom Page-by-Page Navigation Bar -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 flex justify-between items-center shadow-xl">
+      <button id="prevPageBtn" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-bold px-5 py-2.5 rounded-xl transition">
+        ← Previous Lesson
+      </button>
+      <span id="bottomPageIndicator" class="text-xs font-mono text-slate-400">Page 1 of 5</span>
+      <button id="nextPageBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition">
+        Next Lesson →
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- STAGE 6: INDIVIDUAL STUDENT ANALYTICS & EXCEL/CSV EXPORT                  -->
+  <!-- ========================================================================= -->
+  <section id="analyticsView" class="hidden max-w-6xl mx-auto p-6 space-y-6">
+    <div id="postConfidencePromptCard" class="bg-slate-800 border border-emerald-500/50 rounded-2xl p-6 shadow-2xl space-y-4 no-print">
+      <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase">Final Step Before Results</span>
+      <h3 class="text-xl font-bold text-white">Rate Your Post-Training Perceived Confidence</h3>
+      <p class="text-xs text-slate-300">Rate your confidence in laparoscopic port placement after completing the curriculum (1–10):</p>
+      <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-semibold text-slate-300">Post-Training Perceived Confidence:</span>
+          <span id="postConfidenceReadout" class="text-lg font-bold font-mono text-emerald-400">8 / 10</span>
+        </div>
+        <input type="range" id="postConfidenceSlider" min="1" max="10" value="8" class="w-full accent-emerald-500 cursor-pointer">
+      </div>
+      <button id="generateReportBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl shadow transition text-sm">
+        Generate Performance Report & Save Data →
+      </button>
+    </div>
+
+    <div id="analyticsReportContent" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-slate-800 via-slate-800 to-emerald-950 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">LapPort Surgical Training Report</span>
+          <h2 id="reportTraineeHeader" class="text-2xl font-bold text-white mt-1">Trainee Performance & Learning Gain Analysis</h2>
+          <p id="reportMetaSub" class="text-xs text-slate-300 mt-1"></p>
+        </div>
+        <div class="flex flex-wrap gap-2.5 no-print">
+          <button id="exportStudentCsvBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+            <span>📊 Download My Report (Excel/CSV)</span>
+          </button>
+          <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition">
+            🖨️ Print / Save PDF
+          </button>
+          <button id="restartCurriculumBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-600 transition">
+            ↻ New Session
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+          <div class="text-xs text-slate-400 font-semibold uppercase">Overall Port Accuracy</div>
+          <div class="flex items-baseline gap-3 mt-2">
+            <span id="statPreAcc" class="text-lg font-mono text-slate-400 line-through">--%</span>
+            <span class="text-slate-500">→</span>
+            <span id="statPostAcc" class="text-3xl font-bold font-mono text-emerald-400">--%</span>
+          </div>
+          <div id="statDeltaAcc" class="text-xs font-semibold text-emerald-300 mt-2"></div>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+          <div class="text-xs text-slate-400 font-semibold uppercase">Mean Spatial Error (% Torso)</div>
+          <div class="flex items-baseline gap-3 mt-2">
+            <span id="statPreErr" class="text-lg font-mono text-slate-400">--%</span>
+            <span class="text-slate-500">→</span>
+            <span id="statPostErr" class="text-3xl font-bold font-mono text-sky-400">--%</span>
+          </div>
+          <div id="statDeltaErr" class="text-xs font-semibold text-sky-300 mt-2"></div>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+          <div class="text-xs text-slate-400 font-semibold uppercase">Perceived Confidence (1–10)</div>
+          <div class="flex items-baseline gap-3 mt-2">
+            <span id="statPreConf" class="text-lg font-mono text-slate-400">--/10</span>
+            <span class="text-slate-500">→</span>
+            <span id="statPostConf" class="text-3xl font-bold font-mono text-indigo-400">--/10</span>
+          </div>
+          <div id="statDeltaConf" class="text-xs font-semibold text-indigo-300 mt-2"></div>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+          <div class="text-xs text-slate-400 font-semibold uppercase">Theory MCQ Score</div>
+          <div class="flex items-baseline gap-2 mt-2">
+            <span id="statQuizScore" class="text-3xl font-bold font-mono text-amber-400">--%</span>
+          </div>
+          <div id="statQuizSub" class="text-xs text-slate-400 mt-2">Core Curriculum Mastery</div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <h3 class="text-base font-bold text-white">Procedure-by-Procedure Pre-Test vs. Post-Exam Comparison</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-700 text-slate-400 uppercase">
+                <th class="py-3 px-4">Procedure</th>
+                <th class="py-3 px-4">Pre-Test Score</th>
+                <th class="py-3 px-4">Post-Exam Score</th>
+                <th class="py-3 px-4">Accuracy Change (Δ)</th>
+                <th class="py-3 px-4">Pre → Post Mean Error</th>
+                <th class="py-3 px-4">Pre → Post Working Angle (θ)</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsTableBody" class="divide-y divide-slate-700/70 text-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <h3 class="text-base font-bold text-white">Visual Accuracy Comparison (Pre-Test vs. Post-Exam)</h3>
+        <div id="visualBarsContainer" class="space-y-4"></div>
+      </div>
+
+      <!-- ANONYMOUS FEEDBACK SECTION -->
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4 no-print mt-6">
+        <div>
+          <h3 class="text-base font-bold text-white">Anonymous Course Feedback</h3>
+          <p class="text-xs text-slate-400 mt-1">Help us improve the curriculum! Your feedback is saved in a separate secure database and will never be linked to your name or test scores.</p>
+        </div>
+        
+        <textarea id="anonFeedbackText" rows="3" placeholder="What did you find most helpful? What could be improved?" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500"></textarea>
+        
+        <div class="flex flex-wrap justify-between items-center gap-4">
+           <div class="flex items-center gap-3">
+               <span class="text-xs text-slate-300 font-semibold uppercase tracking-wider">Rate Software:</span>
+               <select id="anonFeedbackRating" class="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                 <option value="5">⭐⭐⭐⭐⭐ (5 - Excellent)</option>
+                 <option value="4">⭐⭐⭐⭐ (4 - Good)</option>
+                 <option value="3">⭐⭐⭐ (3 - Average)</option>
+                 <option value="2">⭐⭐ (2 - Needs Work)</option>
+                 <option value="1">⭐ (1 - Poor)</option>
+               </select>
+           </div>
+           <button id="submitAnonFeedbackBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-6 rounded-xl transition text-sm shadow">
+             Submit Anonymous Feedback
+           </button>
+        </div>
+        <div id="feedbackSuccessMsg" class="hidden text-xs text-emerald-400 font-bold bg-emerald-950/50 border border-emerald-500/30 p-3 rounded-lg text-center">
+          Thank you! Your feedback has been securely submitted.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- COMPLETE JAVASCRIPT ENGINE                                                -->
+  <!-- ========================================================================= -->
+  <script>
+    // =========================================================================
+    // 1. CRYPTOGRAPHIC SECURITY & TEACHER AUTHENTICATION ENGINE
+    // =========================================================================
+    // Password is "VibeCode!" (never stored in plaintext).
+    // Includes both Web Crypto PBKDF2-SHA256 AND a pure-JS salted FNV-1a fallback
+    // so it works reliably even when opened locally via file:// on Safari/Chrome.
+    const AUTH_CONFIG = {
+      saltHex: "6c617061726f73636f70795f73616c745f32303235",
+      iterations: 100000,
+      // TRUE PBKDF2 SHA-256 Hash for "VibeCode!"
+      expectedHashHex: "2179e9ee1fb4fd5e06a7c239ff8f6f0073de9b58933326766d93a6350d64508b",
+      // TRUE JS Fallback Digest for "VibeCode!"
+      fallbackDigest: "46f32d65:ccab45fb", 
+      maxFailedAttempts: 5,
+      lockoutDurationMs: 60000,
+      sessionDurationMs: 1800000
+    };
+
+    let authState = {
+      failedAttempts: 0,
+      lockoutUntil: 0,
+      sessionToken: null,
+      sessionExpiry: 0
+    };
+
+    function computeFallbackDigest(password) {
+      let h1 = 0x811c9dc5;
+      let h2 = 0x01000193;
+      const input = "laparoscopy_salt_2025:" + password;
+      for (let round = 0; round < 5000; round++) {
+        for (let i = 0; i < input.length; i++) {
+          const c = input.charCodeAt(i);
+          h1 ^= c;
+          h1 = Math.imul(h1, 0x01000193) >>> 0;
+          h2 ^= (c + round);
+          h2 = Math.imul(h2, 0x85ebca6b) >>> 0;
+        }
+      }
+      return h1.toString(16).padStart(8, '0') + ":" + h2.toString(16).padStart(8, '0');
+    }
+
+    async function verifyTeacherPassword(enteredPassword) {
+      const now = Date.now();
+      if (authState.lockoutUntil > now) {
+        const remainingSec = Math.ceil((authState.lockoutUntil - now) / 1000);
+        return { success: false, message: `Access locked due to failed attempts. Wait ${remainingSec}s.` };
+      }
+
+      let isValid = false;
+      try {
+        if (window.crypto && window.crypto.subtle) {
+          const enc = new TextEncoder();
+          const salt = new Uint8Array(AUTH_CONFIG.saltHex.match(/.{1,2}/g).map(b => parseInt(b, 16)));
+          const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(enteredPassword), { name: "PBKDF2" }, false, ["deriveBits"]);
+          const derivedBits = await window.crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: AUTH_CONFIG.iterations, hash: "SHA-256" }, keyMaterial, 256);
+          const computedHex = Array.from(new Uint8Array(derivedBits)).map(b => b.toString(16).padStart(2, '0')).join('');
+          isValid = (computedHex === AUTH_CONFIG.expectedHashHex);
+        } else {
+          isValid = (computeFallbackDigest(enteredPassword) === AUTH_CONFIG.fallbackDigest);
+        }
+      } catch (e) {
+        isValid = (computeFallbackDigest(enteredPassword) === AUTH_CONFIG.fallbackDigest);
+      }
+
+      if (isValid) {
+        authState.failedAttempts = 0;
+        authState.sessionToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        authState.sessionExpiry = now + AUTH_CONFIG.sessionDurationMs;
+        return { success: true };
+      } else {
+        authState.failedAttempts++;
+        if (authState.failedAttempts >= AUTH_CONFIG.maxFailedAttempts) {
+          authState.lockoutUntil = now + AUTH_CONFIG.lockoutDurationMs;
+          return { success: false, message: `Too many failed attempts. Security lockout active for 60 seconds.` };
+        }
+        return { success: false, message: `Incorrect password. Attempt ${authState.failedAttempts} of ${AUTH_CONFIG.maxFailedAttempts}.` };
+      }
+    }
+
+    function isTeacherSessionActive() {
+      return Boolean(authState.sessionToken && Date.now() < authState.sessionExpiry);
+    }
+
+    // =========================================================================
+    // 2. COHORT DATA REPOSITORY & EXCEL (CSV) EXPORT ENGINE
+    // =========================================================================
+    const DB_STORAGE_KEY = "lapport_cohort_database_v2";
+    let lastSavedRecord = null;
+
+    function getCohortDatabase() {
+      try {
+        const data = localStorage.getItem(DB_STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCohortDatabase(list) {
+      try {
+        localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.error("Storage error", e);
+      }
+    }
+
+    function saveStudentRunToCohort(studentData) {
+      const list = getCohortDatabase();
+      list.push(studentData);
+      saveCohortDatabase(list);
+      lastSavedRecord = studentData;
+    }
+
+    function convertRecordsToCsv(records) {
+      const headers = [
+        "Timestamp",
+        "Trainee_Name",
+        "Training_Stage",
+        "Pre_Confidence_1_10",
+        "Post_Confidence_1_10",
+        "Confidence_Shift",
+        "Pre_Overall_Accuracy_Pct",
+        "Post_Overall_Accuracy_Pct",
+        "Accuracy_Gain_Pct",
+        "Pre_Mean_Spatial_Error_Pct",
+        "Post_Mean_Spatial_Error_Pct",
+        "Spatial_Error_Reduction_Pct",
+        "Theory_Quiz_Score_Pct",
+        "Chole_Pre_Acc",
+        "Chole_Post_Acc",
+        "Appendicectomy_Pre_Acc",
+        "Appendicectomy_Post_Acc",
+        "Right_Hernia_Pre_Acc",
+        "Right_Hernia_Post_Acc",
+        "Left_Hernia_Pre_Acc",
+        "Left_Hernia_Post_Acc",
+        "Anterior_Resection_Pre_Acc",
+        "Anterior_Resection_Post_Acc"
+      ];
+
+      const rows = records.map(r => {
+        const preP = r.preResults || {};
+        const postP = r.postResults || {};
+        return [
+          `"${r.timestamp}"`,
+          `"${(r.name || "").replace(/"/g, '""')}"`,
+          `"${(r.role || "").replace(/"/g, '""')}"`,
+          r.preConfidence,
+          r.postConfidence,
+          r.postConfidence - r.preConfidence,
+          r.preOverallAcc,
+          r.postOverallAcc,
+          r.postOverallAcc - r.preOverallAcc,
+          r.preOverallErr,
+          r.postOverallErr,
+          (r.preOverallErr - r.postOverallErr).toFixed(1),
+          r.quizScorePct,
+          preP.chole ? preP.chole.accuracy : 0,
+          postP.chole ? postP.chole.accuracy : 0,
+          preP.appendicectomy ? preP.appendicectomy.accuracy : 0,
+          postP.appendicectomy ? postP.appendicectomy.accuracy : 0,
+          preP.inguinal_right ? preP.inguinal_right.accuracy : 0,
+          postP.inguinal_right ? postP.inguinal_right.accuracy : 0,
+          preP.inguinal_left ? preP.inguinal_left.accuracy : 0,
+          postP.inguinal_left ? postP.inguinal_left.accuracy : 0,
+          preP.anterior_resection ? preP.anterior_resection.accuracy : 0,
+          postP.anterior_resection ? postP.anterior_resection.accuracy : 0
+        ].join(",");
+      });
+
+      return [headers.join(","), ...rows].join("\r\n");
+    }
+
+    function triggerFileDownload(content, filename, mimeType = "text/csv;charset=utf-8;") {
+      const blob = new Blob(["\uFEFF" + content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // =========================================================================
+    // 3. DATABASE: PATIENT HABITUS MODELS, PROCEDURES & OR SETUPS
+    // =========================================================================
+    const procedureOrder = ["chole", "appendicectomy", "inguinal_right", "inguinal_left", "anterior_resection"];
+
+    const patientModels = {
+      standard: {
+        name: "Standard Adult Habitus",
+        imageFile: "abdomen-standard.jpg",
+        umbilicusY: 255,
+        silhouettePath: "M 85,20 C 80,100 95,180 90,260 C 82,320 75,380 80,480 L 185,480 L 195,410 L 205,410 L 215,480 L 320,480 C 325,380 318,320 310,260 C 305,180 320,100 315,20 Z",
+        clinicalNote: "<strong>Standard Anatomy:</strong> The umbilicus sits reliably at the L3–L4 disc space (aortic bifurcation). Standard umbilical Hasson or Veress entry provides ideal triangulation."
+      },
+      obese: {
+        name: "Bariatric / Obese Habitus (BMI > 40)",
+        imageFile: "abdomen-obese.jpg",
+        umbilicusY: 295,
+        silhouettePath: "M 65,20 C 55,100 45,180 35,265 C 28,335 55,395 70,480 L 185,480 L 195,420 L 205,420 L 215,480 L 330,480 C 345,395 372,335 365,265 C 355,180 345,100 335,20 Z",
+        clinicalNote: "<strong>Bariatric Pearl:</strong> The pannus pulls the umbilicus caudally. Shift primary and lateral ports cephalad above the pannus fold so instruments reach the target without fulcrum resistance."
+      },
+      scar: {
+        name: "Previous Midline Laparotomy Scar",
+        imageFile: "abdomen-scar.jpg",
+        umbilicusY: 255,
+        silhouettePath: "M 85,20 C 80,100 95,180 90,260 C 82,320 75,380 80,480 L 185,480 L 195,410 L 205,410 L 215,480 L 320,480 C 325,380 318,320 310,260 C 305,180 320,100 315,20 Z",
+        clinicalNote: "<strong>Adhesion Safety Pearl:</strong> Avoid blind primary trocar insertion through a prior midline scar. Establish pneumoperitoneum at <strong>Palmer's Point (LUQ)</strong> or use an open preperitoneal (TEP) entry."
+      },
+      pediatric: {
+        name: "Pediatric / Slender Habitus",
+        imageFile: "abdomen-pediatric.jpg",
+        umbilicusY: 250,
+        silhouettePath: "M 105,20 C 102,100 110,180 108,260 C 104,320 100,380 104,480 L 188,480 L 196,410 L 204,410 L 212,480 L 296,480 C 300,380 296,320 292,260 C 290,180 298,100 295,20 Z",
+        clinicalNote: "<strong>Pediatric / Slender Pearl:</strong> Short xiphoid-to-pubis distance and thin abdominal wall. Keep lateral ports well lateral to the inferior epigastric vessels to prevent instrument clashing."
+      }
+    };
+
+    const procedures = {
+      chole: {
+        name: "Laparoscopic Cholecystectomy",
+        organElementId: "organ_chole",
+        target: { x: 38.0, y: 33.6, label: "Calot's Triangle" },
+        triangulation: { cameraIdx: 0, workingIndices: [1, 2], assistIdx: 3 },
+        summary: "Standard 4-port configuration. Maintains optical triangulation toward Calot's triangle while the subxiphoid and RUQ mid-clavicular ports converge at roughly a 60° manipulation angle.",
+        ports: [
+          { id: "umbilical", name: "Primary Camera Port", testName: "Primary Camera Port", size: "10mm", x: 50.0, y: 51.0, landmark: "Infra- or supra-umbilical midline", function: "Primary optical port (30° laparoscope) and gallbladder extraction." },
+          { id: "epigastric", name: "Subxiphoid / Epigastric Port", testName: "Primary Right-Hand Operating Port", size: "10mm", x: 51.5, y: 25.0, landmark: "2–3 cm below xiphoid process, just right of midline", function: "Primary right-hand operating port (hook diathermy, Maryland dissector, clip applicator)." },
+          { id: "ruq_midclav", name: "RUQ Mid-Clavicular Port", testName: "Left-Hand Grasping Port", size: "5mm", x: 34.0, y: 36.0, landmark: "Right subcostal margin along the mid-clavicular line", function: "Left-hand grasping port to retract Hartmann's pouch laterally." },
+          { id: "ruq_antax", name: "RUQ Anterior Axillary Port", testName: "Assistant Retraction Port", size: "5mm", x: 25.5, y: 44.0, landmark: "Right anterior axillary line, level with umbilicus", function: "Assistant port to grasp gallbladder fundus and retract cephalad over the liver." }
+        ],
+        modelOverrides: {
+          obese: [{ x: 50.0, y: 43.0, name: "High Supra-Umbilical Camera Port", landmark: "15 cm below xiphoid" }, { x: 51.5, y: 24.0 }, { x: 31.0, y: 35.0 }, { x: 20.0, y: 42.0 }],
+          scar: [{ x: 66.2, y: 35.0, name: "Palmer's Point Optical Port", landmark: "LUQ: 3 cm below left costal margin" }, { x: 53.0, y: 25.0 }, { x: 34.0, y: 36.0 }, { x: 25.5, y: 44.0 }],
+          pediatric: [{ x: 50.0, y: 50.0 }, { x: 52.0, y: 27.0 }, { x: 37.0, y: 37.0 }, { x: 29.0, y: 44.0 }]
+        }
+      },
+      appendicectomy: {
+        name: "Laparoscopic Appendicectomy",
+        organElementId: "organ_appendicectomy",
+        target: { x: 34.25, y: 61.6, label: "Appendix Base" },
+        triangulation: { cameraIdx: 0, workingIndices: [1, 2], assistIdx: null },
+        summary: "Standard 3-port triangulation directed toward the appendix base in the Right Iliac Fossa (RIF). The LIF and suprapubic ports form an ergonomic triangle around the optical axis.",
+        ports: [
+          { id: "umbilical_app", name: "Primary Camera Port", testName: "Primary Camera Port", size: "10mm", x: 50.0, y: 51.0, landmark: "Umbilical ring (Hasson open technique)", function: "Primary optical port (30° laparoscope) and specimen extraction." },
+          { id: "llq_port", name: "Left Iliac Fossa (LIF) Port", testName: "Primary Working Port", size: "5mm", x: 68.0, y: 62.0, landmark: "Left lower quadrant, lateral to inferior epigastric vessels", function: "Working port for atraumatic grasper or energy device." },
+          { id: "suprapubic", name: "Suprapubic Port", testName: "Secondary Working Port", size: "5mm", x: 50.0, y: 72.0, landmark: "Midline, 2–3 cm superior to pubic symphysis (catheterize bladder)", function: "Second working port providing triangulation toward the cecum and appendix base." }
+        ],
+        modelOverrides: {
+          obese: [{ x: 50.0, y: 49.0 }, { x: 72.0, y: 58.0 }, { x: 50.0, y: 68.0 }],
+          scar: [{ x: 66.2, y: 35.0, name: "Palmer's Point Optical Port" }, { x: 68.0, y: 62.0 }, { x: 42.0, y: 72.0 }],
+          pediatric: [{ x: 50.0, y: 50.0 }, { x: 65.0, y: 61.0 }, { x: 50.0, y: 71.0 }]
+        }
+      },
+      inguinal_right: {
+        name: "Right Laparoscopic Inguinal Hernia Repair (TAPP / TEP)",
+        organElementId: "organ_inguinal_right",
+        target: { x: 38.5, y: 71.6, label: "Right Myopectineal Orifice" },
+        triangulation: { cameraIdx: 0, workingIndices: [1, 2], assistIdx: null },
+        summary: "Standard 3-port TAPP configuration targeting the Right Myopectineal Orifice of Fruchaud. Bilateral mid-clavicular working ports at the umbilical level provide ergonomic triangulation.",
+        ports: [
+          { id: "umb_r_hernia", name: "Umbilical Camera Port", testName: "Camera Port", size: "10mm", x: 50.0, y: 50.0, landmark: "Umbilical ring", function: "Primary optical port and conduit for prosthetic mesh insertion." },
+          { id: "r_lat_hernia", name: "Right Lateral Working Port", testName: "Right-Hand Dominant Working Port", size: "5mm", x: 31.0, y: 50.0, landmark: "Right mid-clavicular line at umbilical level (lateral to epigastrics)", function: "Right-hand dominant working port (scissors, diathermy, tacker/needle driver)." },
+          { id: "l_lat_hernia", name: "Left Lateral Working Port", testName: "Left-Hand Grasping Port", size: "5mm", x: 68.0, y: 54.0, landmark: "Left mid-clavicular line at or slightly below umbilical level", function: "Left-hand grasping port for peritoneal flap traction and sac reduction." }
+        ],
+        modelOverrides: {
+          obese: [{ x: 50.0, y: 46.0 }, { x: 27.0, y: 46.0 }, { x: 72.0, y: 50.0 }],
+          scar: [{ x: 46.0, y: 51.0, name: "Right Rectus Sheath TEP Port" }, { x: 30.0, y: 51.0 }, { x: 68.0, y: 54.0 }],
+          pediatric: [{ x: 50.0, y: 50.0 }, { x: 34.0, y: 50.0 }, { x: 66.0, y: 53.0 }]
+        }
+      },
+      inguinal_left: {
+        name: "Left Laparoscopic Inguinal Hernia Repair (TAPP / TEP)",
+        organElementId: "organ_inguinal_left",
+        target: { x: 61.5, y: 71.6, label: "Left Myopectineal Orifice" },
+        triangulation: { cameraIdx: 0, workingIndices: [1, 2], assistIdx: null },
+        summary: "Standard 3-port TAPP configuration targeting the Left Myopectineal Orifice of Fruchaud. Bilateral working ports placed lateral to the inferior epigastric vessels converge on the left groin.",
+        ports: [
+          { id: "umb_l_hernia", name: "Umbilical Camera Port", testName: "Camera Port", size: "10mm", x: 50.0, y: 50.0, landmark: "Umbilical ring", function: "Primary optical port and conduit for rolled prosthetic mesh insertion." },
+          { id: "l_lat_hernia_main", name: "Left Lateral Working Port", testName: "Ipsilateral Working Port", size: "5mm", x: 69.0, y: 50.0, landmark: "Left mid-clavicular line at umbilical level (lateral to epigastrics)", function: "Ipsilateral working port for dissection, sac reduction, and mesh positioning." },
+          { id: "r_lat_hernia_sub", name: "Right Lateral Working Port", testName: "Contralateral Working Port", size: "5mm", x: 32.0, y: 54.0, landmark: "Right mid-clavicular line at or slightly below umbilical level", function: "Contralateral working port providing medial-to-lateral triangulation." }
+        ],
+        modelOverrides: {
+          obese: [{ x: 50.0, y: 46.0 }, { x: 73.0, y: 46.0 }, { x: 28.0, y: 50.0 }],
+          scar: [{ x: 54.0, y: 51.0, name: "Left Rectus Sheath TEP Port" }, { x: 70.0, y: 51.0 }, { x: 32.0, y: 54.0 }],
+          pediatric: [{ x: 50.0, y: 50.0 }, { x: 66.0, y: 50.0 }, { x: 34.0, y: 53.0 }]
+        }
+      },
+      anterior_resection: {
+        name: "Laparoscopic Anterior Resection (4-Port)",
+        organElementId: "organ_anterior_resection",
+        target: { x: 59.0, y: 66.0, label: "Sigmoid / IMA Pedicle & Pelvis" },
+        triangulation: { cameraIdx: 0, workingIndices: [1, 2], assistIdx: 3 },
+        summary: "Standard 4-port colorectal configuration. The surgeon stands on the patient's right side operating through the 12mm RIF stapler port and 5mm RUQ port, triangulating toward the IMA pedicle and pelvis.",
+        ports: [
+          { id: "umb_ar", name: "Supra-Umbilical Camera Port", testName: "Camera Port", size: "10mm", x: 50.0, y: 49.0, landmark: "Supra-umbilical midline", function: "Primary optical port (30° scope) viewing the IMA pedicle, splenic flexure, and pelvis." },
+          { id: "rif_stapler", name: "Right Iliac Fossa (RIF) Stapler Port", testName: "Primary Right-Hand Stapler Port", size: "10mm", x: 31.0, y: 63.0, landmark: "RLQ, 2–3 cm medial and superior to Right ASIS", function: "Surgeon's dominant right-hand 12mm port for energy dissection, IMA clipping, and linear stapling." },
+          { id: "ruq_ar", name: "Right Flank / RUQ Working Port", testName: "Left-Hand Grasping Port", size: "5mm", x: 32.0, y: 40.0, landmark: "Right mid-clavicular line, above umbilical level", function: "Surgeon's left-hand atraumatic grasper port." },
+          { id: "lif_assist", name: "Left Iliac Fossa (LIF) Assistant Port", testName: "Assistant Retraction Port", size: "5mm", x: 69.0, y: 61.0, landmark: "LLQ, lateral to left inferior epigastric vessels", function: "Assistant port for sigmoid mesocolon retraction." }
+        ],
+        modelOverrides: {
+          obese: [{ x: 48.0, y: 45.0 }, { x: 27.0, y: 58.0 }, { x: 28.0, y: 37.0 }, { x: 73.0, y: 57.0 }],
+          scar: [{ x: 66.2, y: 35.0, name: "Palmer's Point Primary Entry" }, { x: 31.0, y: 63.0 }, { x: 32.0, y: 40.0 }, { x: 69.0, y: 61.0 }],
+          pediatric: [{ x: 50.0, y: 49.0 }, { x: 34.0, y: 62.0 }, { x: 35.0, y: 41.0 }, { x: 66.0, y: 60.0 }]
+        }
+      }
+    };
+
+    const orSetupData = {
+      chole: {
+        title: "Laparoscopic Cholecystectomy (North American Setup)",
+        lithotomy: false,
+        target: { x: 235, y: 140 },
+        surgeon: { x: 335, y: 165 },
+        assistant: { x: 165, y: 155 },
+        nurse: { x: 335, y: 235 },
+        mon1: { x: 110, y: 95 },
+        mon2: { x: 385, y: 95 },
+        tilt: "Reverse Trendelenburg (15°–30° head-up) + 15° Left Lateral Tilt. Gravity pulls the transverse colon/omentum toward the pelvis and drops the duodenum away from Calot's triangle.",
+        team: "Surgeon stands on the Patient's Left looking across the RUQ target directly at the 1° Monitor on the Patient's Right Upper corner. Assistant stands on the Patient's Right holding the fundus grasper.",
+        safety: "Place a footboard and secure thigh straps to prevent caudal sliding during steep Reverse Trendelenburg."
+      },
+      appendicectomy: {
+        title: "Laparoscopic Appendicectomy",
+        lithotomy: false,
+        target: { x: 232, y: 195 },
+        surgeon: { x: 335, y: 160 },
+        assistant: { x: 335, y: 115 },
+        nurse: { x: 335, y: 235 },
+        mon1: { x: 115, y: 225 },
+        mon2: { x: 385, y: 225 },
+        tilt: "Trendelenburg (15°–20° head-down) + 15° Left Lateral Tilt. Sweeps small bowel loops out of the pelvis and rolls the mobile cecum/appendix medially into view.",
+        team: "Both Surgeon and Camera Assistant stand on the Patient's Left looking across the RIF toward the 1° Monitor positioned near the Patient's Right hip/foot.",
+        safety: "Ensure an indwelling urinary catheter (or voided bladder) prior to suprapubic port insertion. Tuck the patient's left arm."
+      },
+      inguinal_right: {
+        title: "Right Inguinal Hernia Repair (TAPP / TEP)",
+        lithotomy: false,
+        target: { x: 235, y: 210 },
+        surgeon: { x: 335, y: 135 },
+        assistant: { x: 165, y: 135 },
+        nurse: { x: 335, y: 230 },
+        mon1: { x: 155, y: 295 },
+        mon2: { x: 345, y: 295 },
+        tilt: "Trendelenburg (15°–20° head-down) reduces viscera from the hernia sac and pulls bowel cephalad away from the Myopectineal Orifice.",
+        team: "Surgeon stands at the contralateral (Left) shoulder/mid-abdomen looking caudally toward the 1° Monitor at the foot of the table.",
+        safety: "Tuck both arms at the patient's sides so the surgeon and assistant can stand comfortably near the shoulders without abducting the brachial plexus."
+      },
+      inguinal_left: {
+        title: "Left Inguinal Hernia Repair (TAPP / TEP)",
+        lithotomy: false,
+        target: { x: 265, y: 210 },
+        surgeon: { x: 165, y: 135 },
+        assistant: { x: 335, y: 135 },
+        nurse: { x: 165, y: 230 },
+        mon1: { x: 345, y: 295 },
+        mon2: { x: 155, y: 295 },
+        tilt: "Trendelenburg (15°–20° head-down) clears loops of sigmoid and small bowel from the left internal ring.",
+        team: "Surgeon stands on the Patient's Right (contralateral) shoulder/flank looking obliquely across the pelvis to the 1° Monitor at the left foot of the bed.",
+        safety: "Decompress the urinary bladder before dissecting the medial Space of Retzius over the pubic symphysis."
+      },
+      anterior_resection: {
+        title: "Laparoscopic Anterior Resection (Lloyd-Davies)",
+        lithotomy: true,
+        target: { x: 262, y: 198 },
+        surgeon: { x: 165, y: 165 },
+        assistant: { x: 165, y: 118 },
+        nurse: { x: 165, y: 235 },
+        mon1: { x: 375, y: 235 },
+        mon2: { x: 115, y: 95 },
+        tilt: "Modified Lithotomy (Lloyd-Davies) + Steep Trendelenburg (20°–25°) + 15°–20° Right Lateral Tilt. Gravity sweeps small bowel into the RUQ to expose the IMA pedicle and sacral promontory.",
+        team: "Surgeon and Camera Assistant stand on the Patient's Right looking across to the 1° Monitor at the Patient's Left hip. Stirrups allow transanal circular stapler access between the legs.",
+        safety: "Use a non-slip gel pad/beanbag for steep Trendelenburg and pad the fibular heads in stirrups to prevent common peroneal nerve palsy."
+      }
+    };
+
+    // =========================================================================
+    // 4. CURRICULUM STATE & WORKFLOW CONTROLLER
+    // =========================================================================
+    let workflowStage = "registration";
+    let traineeProfile = { name: "", role: "", preConfidence: 5, postConfidence: 8 };
+    let currentExamIndex = 0;
+    let walkthroughVisited = new Set(["chole"]);
+    let preTestResults = {};
+    let postTestResults = {};
+
+    let currentProcedureKey = "chole";
+    let currentPatientModelKey = "standard";
+    let currentMode = "study";
+    let userPlacements = [];
+    let isEvaluated = false;
+    let manualPhotoDataUrl = null;
+    // NEW: Variables for QI Time Tracking
+    let preTestStartTime = 0;
+    let preTestDuration = 0; // stored in seconds
+    let postTestStartTime = 0;
+    let postTestDuration = 0;
+    let timerInterval = null;
+    let isFollowUp = false;
+
+    // NEW: Timer Functions
+    function startTimer() {
+      const display = document.getElementById("liveTimerDisplay");
+      const badge = document.getElementById("activeTimerBadge");
+      if(badge) badge.classList.remove("hidden");
+      
+      const startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsedSecs = Math.floor((Date.now() - startTime) / 1000);
+        const mins = String(Math.floor(elapsedSecs / 60)).padStart(2, '0');
+        const secs = String(elapsedSecs % 60).padStart(2, '0');
+        if(display) display.textContent = `${mins}:${secs}`;
+      }, 1000);
+      return startTime;
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      const badge = document.getElementById("activeTimerBadge");
+      if(badge) badge.classList.add("hidden");
+    }
+
+    // DOM References
+    const registrationView = document.getElementById("registrationView");
+    const simulatorView = document.getElementById("simulatorView");
+    const theoryView = document.getElementById("theoryView");
+    const analyticsView = document.getElementById("analyticsView");
+    const toggleSandboxBtn = document.getElementById("toggleSandboxBtn");
+    const navStudentSectionBtn = document.getElementById("navStudentSectionBtn");
+    const navTeacherSectionBtn = document.getElementById("navTeacherSectionBtn");
+    const teacherAuthSection = document.getElementById("teacherAuthSection");
+    const teacherDashboardSection = document.getElementById("teacherDashboardSection");
+    const teacherPasswordInput = document.getElementById("teacherPasswordInput");
+    const authLockoutMsg = document.getElementById("authLockoutMsg");
+    const loginTeacherBtn = document.getElementById("loginTeacherBtn");
+    const cancelTeacherAuthBtn = document.getElementById("cancelTeacherAuthBtn");
+    const logoutTeacherBtn = document.getElementById("logoutTeacherBtn");
+
+    function showStudentSection() {
+      teacherAuthSection.classList.add("hidden");
+      teacherDashboardSection.classList.add("hidden");
+      if (workflowStage !== "sandbox") {
+        document.getElementById("curriculumStepper").classList.remove("hidden");
+      }
+
+      navStudentSectionBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow";
+      navTeacherSectionBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white flex items-center gap-1.5";
+
+      if (workflowStage === "registration") {
+        registrationView.classList.remove("hidden");
+      } else if (workflowStage === "theory") {
+        theoryView.classList.remove("hidden");
+      } else if (workflowStage === "analytics") {
+        analyticsView.classList.remove("hidden");
+      } else {
+        simulatorView.classList.remove("hidden");
+      }
+    }
+
+    function showTeacherSection() {
+      registrationView.classList.add("hidden");
+      simulatorView.classList.add("hidden");
+      theoryView.classList.add("hidden");
+      analyticsView.classList.add("hidden");
+      document.getElementById("curriculumStepper").classList.add("hidden");
+
+      navTeacherSectionBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-amber-600 text-white shadow flex items-center gap-1.5";
+      navStudentSectionBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+
+      if (isTeacherSessionActive()) {
+        teacherAuthSection.classList.add("hidden");
+        teacherDashboardSection.classList.remove("hidden");
+        renderCohortDashboard();
+        renderFeedbackDashboard();
+      } else {
+        teacherDashboardSection.classList.add("hidden");
+        teacherAuthSection.classList.remove("hidden");
+        teacherPasswordInput.value = "";
+        authLockoutMsg.classList.add("hidden");
+        teacherPasswordInput.focus();
+      }
+    }
+
+    navStudentSectionBtn.addEventListener("click", showStudentSection);
+    navTeacherSectionBtn.addEventListener("click", showTeacherSection);
+    cancelTeacherAuthBtn.addEventListener("click", showStudentSection);
+
+    loginTeacherBtn.addEventListener("click", async () => {
+      const pwd = teacherPasswordInput.value;
+      loginTeacherBtn.disabled = true;
+      loginTeacherBtn.textContent = "Verifying...";
+
+      const res = await verifyTeacherPassword(pwd);
+      loginTeacherBtn.disabled = false;
+      loginTeacherBtn.textContent = "Verify & Log In →";
+
+      if (res.success) {
+        teacherAuthSection.classList.add("hidden");
+        teacherDashboardSection.classList.remove("hidden");
+        renderCohortDashboard();
+        renderFeedbackDashboard();
+      } else {
+        authLockoutMsg.textContent = res.message;
+        authLockoutMsg.classList.remove("hidden");
+      }
+    });
+
+    teacherPasswordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loginTeacherBtn.click();
+    });
+
+    logoutTeacherBtn.addEventListener("click", () => {
+      authState.sessionToken = null;
+      authState.sessionExpiry = 0;
+      showStudentSection();
+    });
+
+    function renderCohortDashboard() {
+      const records = getCohortDatabase();
+      document.getElementById("cohortTotalStudents").textContent = records.length;
+
+      if (records.length === 0) {
+        document.getElementById("cohortMeanGain").textContent = "+0.0%";
+        document.getElementById("cohortMeanErrReduction").textContent = "-0.0%";
+        document.getElementById("cohortMeanConfGain").textContent = "+0.0 pts";
+        document.getElementById("cohortTableBody").innerHTML = `
+          <tr><td colspan="9" class="py-8 text-center text-slate-500 italic">No student runs recorded yet. Click "+ Add Demo Student Row" above to test the Excel export, or have students complete Stage 6.</td></tr>
+        `;
+        return;
+      }
+
+      let sumGain = 0, sumErrRed = 0, sumConfGain = 0;
+      const rowsHtml = records.map((r, idx) => {
+        const gain = r.postOverallAcc - r.preOverallAcc;
+        const errRed = (r.preOverallErr - r.postOverallErr).toFixed(1);
+        const confGain = r.postConfidence - r.preConfidence;
+
+        sumGain += gain;
+        sumErrRed += parseFloat(errRed);
+        sumConfGain += confGain;
+
+        return `
+          <tr class="hover:bg-slate-900/60 transition">
+            <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">${r.timestamp}</td>
+            <td class="py-3 px-3 font-bold text-white">${r.name}</td>
+            <td class="py-3 px-3 text-slate-300">${r.role}</td>
+            <td class="py-3 px-3 font-mono text-slate-300">${r.preOverallAcc}%</td>
+            <td class="py-3 px-3 font-mono font-bold text-emerald-400">${r.postOverallAcc}%</td>
+            <td class="py-3 px-3 font-mono font-bold ${gain >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${gain >= 0 ? '+' : ''}${gain}%</td>
+            <td class="py-3 px-3 font-mono text-indigo-300">${r.preConfidence} → ${r.postConfidence} (${confGain >= 0 ? '+' : ''}${confGain})</td>
+            <td class="py-3 px-3 font-mono text-amber-300">${r.quizScorePct}%</td>
+            <td class="py-3 px-3 text-right">
+              <button onclick="downloadSingleStudentCsv(${idx})" class="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-md text-[11px] font-semibold transition">
+                CSV
+              </button>
+            </td>
+          </tr>
+        `;
+      }).reverse().join("");
+
+      const avgGain = (sumGain / records.length).toFixed(1);
+      const avgErrRed = (sumErrRed / records.length).toFixed(1);
+      const avgConfGain = (sumConfGain / records.length).toFixed(1);
+
+      document.getElementById("cohortMeanGain").textContent = `${avgGain >= 0 ? '+' : ''}${avgGain}%`;
+      document.getElementById("cohortMeanErrReduction").textContent = `-${Math.abs(avgErrRed)}%`;
+      document.getElementById("cohortMeanConfGain").textContent = `${avgConfGain >= 0 ? '+' : ''}${avgConfGain} pts`;
+      document.getElementById("cohortTableBody").innerHTML = rowsHtml;
+    }
+
+    document.getElementById("exportMasterCsvBtn").addEventListener("click", () => {
+      const records = getCohortDatabase();
+      if (records.length === 0) {
+        alert("No cohort records available to export yet. Click '+ Add Demo Student Row' to test.");
+        return;
+      }
+      const csv = convertRecordsToCsv(records);
+      const dateStr = new Date().toISOString().slice(0, 10);
+      triggerFileDownload(csv, `LapPort_Master_Cohort_${dateStr}.csv`);
+    });
+
+    document.getElementById("exportMasterJsonBtn").addEventListener("click", () => {
+      const records = getCohortDatabase();
+      const json = JSON.stringify(records, null, 2);
+      const dateStr = new Date().toISOString().slice(0, 10);
+      triggerFileDownload(json, `LapPort_Cohort_Backup_${dateStr}.json`, "application/json");
+    });
+
+    document.getElementById("seedSampleDataBtn").addEventListener("click", () => {
+      const sampleRecord = {
+        timestamp: new Date().toLocaleString(),
+        name: "Dr. Alex Rivera (Demo)",
+        role: "Core Surgical Trainee (CST / Junior Resident)",
+        preConfidence: 4,
+        postConfidence: 8,
+        preOverallAcc: 56,
+        postOverallAcc: 91,
+        preOverallErr: 11.4,
+        postOverallErr: 3.8,
+        quizScorePct: 100,
+        preResults: {
+          chole: { accuracy: 55, meanError: 11.2, angle: 41 },
+          appendicectomy: { accuracy: 60, meanError: 10.5, angle: 78 },
+          inguinal_right: { accuracy: 50, meanError: 12.1, angle: 39 },
+          inguinal_left: { accuracy: 60, meanError: 10.8, angle: 42 },
+          anterior_resection: { accuracy: 55, meanError: 12.4, angle: 38 }
+        },
+        postResults: {
+          chole: { accuracy: 92, meanError: 3.4, angle: 61 },
+          appendicectomy: { accuracy: 90, meanError: 4.1, angle: 58 },
+          inguinal_right: { accuracy: 90, meanError: 3.9, angle: 62 },
+          inguinal_left: { accuracy: 90, meanError: 4.0, angle: 59 },
+          anterior_resection: { accuracy: 93, meanError: 3.6, angle: 60 }
+        }
+      };
+      saveStudentRunToCohort(sampleRecord);
+      renderCohortDashboard();
+    });
+
+    document.getElementById("clearCohortDataBtn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to delete all saved student cohort records? This cannot be undone.")) {
+        saveCohortDatabase([]);
+        renderCohortDashboard();
+      }
+    });
+
+    window.downloadSingleStudentCsv = function(recordIndex) {
+      const records = getCohortDatabase();
+      const r = records[recordIndex];
+      if (!r) return;
+      const csv = convertRecordsToCsv([r]);
+      const safeName = r.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      triggerFileDownload(csv, `LapPort_${safeName}_report.csv`);
+    };
+
+    document.getElementById("exportStudentCsvBtn").addEventListener("click", () => {
+      if (!lastSavedRecord) {
+        alert("No completed session data found.");
+        return;
+      }
+      const csv = convertRecordsToCsv([lastSavedRecord]);
+      const safeName = lastSavedRecord.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      triggerFileDownload(csv, `LapPort_${safeName}_report.csv`);
+    });
+
+    // =========================================================================
+    // 5. STUDENT CURRICULUM STEPPER & EXAM WORKFLOW
+    // =========================================================================
+    function updateStageStepperUI(activeStageNum) {
+      for (let i = 1; i <= 6; i++) {
+        const pill = document.getElementById(`stagePill_${i}`);
+        if (i < activeStageNum) {
+          pill.className = "p-2 rounded-lg border text-xs bg-emerald-950/60 border-emerald-500/40 text-emerald-300";
+          pill.firstElementChild.className = "text-[10px] font-mono text-emerald-400";
+        } else if (i === activeStageNum) {
+          pill.className = "p-2 rounded-lg border text-xs bg-emerald-600/30 border-emerald-400 text-white font-bold shadow";
+          pill.firstElementChild.className = "text-[10px] font-mono text-emerald-200";
+        } else {
+          pill.className = "p-2 rounded-lg border text-xs bg-slate-900/60 border-slate-700 text-slate-400";
+          pill.firstElementChild.className = "text-[10px] font-mono text-slate-500";
+        }
+      }
+    }
+
+    const preConfidenceSlider = document.getElementById("preConfidenceSlider");
+    const preConfidenceReadout = document.getElementById("preConfidenceReadout");
+    preConfidenceSlider.addEventListener("input", (e) => {
+      preConfidenceReadout.textContent = `${e.target.value} / 10`;
+    });
+
+    document.getElementById("startPreTestBtn").addEventListener("click", () => {
+      const name = document.getElementById("traineeNameInput").value.trim();
+      if (!name) return document.getElementById("regErrorMsg").classList.remove("hidden");
+      
+      // Check if they toggled the new Follow-Up mode
+      const followUpToggle = document.getElementById("isFollowUpTest");
+      isFollowUp = followUpToggle ? followUpToggle.checked : false;
+      
+      document.getElementById("regErrorMsg").classList.add("hidden");
+      
+      // START THE CLOCK!
+      if (isFollowUp) {
+          postTestStartTime = startTimer();
+      } else {
+          preTestStartTime = startTimer(); 
+      }
+      
+      // Launch the exam!
+      startBlindedExamStage(isFollowUp ? "posttest" : "pretest");
+    });
+
+    function startBlindedExamStage(stageType) {
+      workflowStage = stageType;
+      currentExamIndex = 0;
+      
+      // NEW: Stop the clock if it was running, and start a fresh one!
+      stopTimer();
+      if (stageType === "pretest") {
+          preTestStartTime = startTimer();
+      } else if (stageType === "posttest") {
+          postTestStartTime = startTimer();
+      }
+
+      // Hide panels and show simulator
+      document.getElementById("registrationView")?.classList.add("hidden");
+      document.getElementById("theoryView")?.classList.add("hidden");
+      document.getElementById("analyticsView")?.classList.add("hidden");
+      document.getElementById("simulatorView")?.classList.remove("hidden");
+
+      if (typeof updateStageStepperUI === "function") {
+          updateStageStepperUI(stageType === "pretest" ? 2 : 5);
+      }
+      loadExamProcedureStep();
+    }
+
+    function loadExamProcedureStep() {
+      currentProcedureKey = procedureOrder[currentExamIndex];
+      document.getElementById("procedureSelect").value = currentProcedureKey;
+      currentMode = "practice";
+      userPlacements = [];
+      isEvaluated = false;
+
+      const proc = procedures[currentProcedureKey];
+      const isPre = workflowStage === "pretest";
+
+      document.getElementById("simBannerStageTag").textContent = isPre
+        ? `Stage 2 of 6 • Blinded Baseline Pre-Test (No Feedback)`
+        : `Stage 5 of 6 • Final Post-Training Exam (No Feedback)`;
+      document.getElementById("simBannerStageTag").className = "text-xs font-bold uppercase tracking-widest text-amber-400";
+      document.getElementById("simBannerTitle").textContent = `Procedure ${currentExamIndex + 1} of ${procedureOrder.length}: ${proc.name}`;
+      document.getElementById("simBannerSub").textContent = "Click on the torso to place each required port in sequence. Target organs and triangulation vectors are hidden during testing.";
+
+      document.getElementById("simulatorToolbar").classList.add("hidden");
+      document.getElementById("selectorCard").classList.add("hidden");
+      document.getElementById("studyPanel").classList.add("hidden");
+      document.getElementById("practicePanel").classList.remove("hidden");
+      document.getElementById("resultsBox").classList.add("hidden");
+
+      const actionBtn = document.getElementById("examActionBtn");
+      actionBtn.textContent = currentExamIndex < procedureOrder.length - 1
+        ? `Save & Next Procedure (${currentExamIndex + 2}/${procedureOrder.length}) →`
+        : isPre
+          ? "Complete Pre-Test & Start Theory Module →"
+          : "Complete Final Exam & View Analytics Report →";
+
+      render();
+    }
+
+    function computeProcedureResult(procKey, placements) {
+  const proc = procedures[procKey];
+  const idealPorts = proc.ports;
+  let totalPoints = 0;
+  let totalErrorDist = 0;
+
+  // 1. Continuous Scoring Decay
+  idealPorts.forEach((ideal, idx) => {
+    const u = placements[idx];
+    const dist = Math.hypot(ideal.x - u.x, ideal.y - u.y);
+    totalErrorDist += dist;
+    
+    // 100 points at 0% error, losing 6 points per 1% off-target (floors at 10 pts)
+    let points = Math.max(10, 100 - (dist * 6));
+    
+    // Generous sweet spot: Anything under 3% error is functionally perfect
+    if (dist <= 3) points = 100; 
+    
+    totalPoints += points;
+  });
+
+  const [w1Idx, w2Idx] = proc.triangulation.workingIndices;
+  const angle = calculateManipulationAngle(proc.target, placements[w1Idx], placements[w2Idx]);
+  
+  // 2. Ergonomic Angle Scoring
+  let angleScore = 100;
+  // Penalize for angles outside the 45°-75° ergonomic sweet spot
+  if (angle < 45) angleScore = Math.max(10, 100 - ((45 - angle) * 3));
+  if (angle > 75) angleScore = Math.max(10, 100 - ((angle - 75) * 3));
+
+  const baseSpatialAccuracy = totalPoints / idealPorts.length;
+  
+  // 3. Composite Grade: 80% Spatial Accuracy, 20% Ergonomics
+  const compositeAccuracy = Math.round((baseSpatialAccuracy * 0.8) + (angleScore * 0.2));
+
+  return {
+    accuracy: compositeAccuracy,
+    meanError: parseFloat((totalErrorDist / idealPorts.length).toFixed(1)),
+    angle,
+    placements: [...placements]
+  };
+}
+
+    document.getElementById("examActionBtn").addEventListener("click", () => {
+      if (workflowStage === "pretest" || workflowStage === "posttest") {
+        const result = computeProcedureResult(currentProcedureKey, userPlacements);
+        if (workflowStage === "pretest") {
+          preTestResults[currentProcedureKey] = result;
+        } else {
+          postTestResults[currentProcedureKey] = result;
+        }
+
+        if (currentExamIndex < procedureOrder.length - 1) {
+          currentExamIndex++;
+          loadExamProcedureStep();
+        } else if (workflowStage === "pretest") {
+          preTestDuration = Math.floor((Date.now() - preTestStartTime) / 1000);
+          stopTimer();
+          
+          showPreTestFeedback();
+        } else {
+          postTestDuration = Math.floor((Date.now() - postTestStartTime) / 1000);
+          stopTimer();
+          
+          // NEW: Show post-test feedback instead of skipping straight to the final report
+          showPostTestFeedback();
+        }
+      } else if (workflowStage === "sandbox") {
+        evaluateSandboxPlacements();
+      }
+    });
+
+function showPreTestFeedback() {
+      simulatorView.classList.add("hidden");
+      const feedbackView = document.getElementById("preTestFeedbackView");
+      feedbackView.classList.remove("hidden");
+      
+      let totalAcc = 0;
+      let html = "";
+      
+      procedureOrder.forEach(procKey => {
+        const proc = procedures[procKey];
+        const res = preTestResults[procKey];
+        totalAcc += res.accuracy;
+        
+        let colorClass = res.accuracy >= 80 ? "text-emerald-400" : res.accuracy >= 50 ? "text-amber-400" : "text-rose-400";
+        let tip = res.accuracy >= 80 ? "Good baseline intuition." : res.meanError > 10 ? "Significant spatial error. Review anatomical landmarks carefully in Stage 4." : "Review ergonomic triangulation angles.";
+        
+        html += `
+          <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 flex justify-between items-center">
+            <div>
+              <div class="font-bold text-white">${proc.name}</div>
+              <div class="text-xs text-slate-400 mt-0.5">Mean Error: ${res.meanError}% | Angle: ${res.angle}°</div>
+              <div class="text-[11px] text-slate-500 mt-1 italic">${tip}</div>
+            </div>
+            <div class="text-2xl font-bold font-mono ${colorClass}">${res.accuracy}%</div>
+          </div>
+        `;
+      });
+      
+      document.getElementById("feedbackOverallScore").textContent = `${Math.round(totalAcc / procedureOrder.length)}%`;
+      document.getElementById("feedbackProceduresContainer").innerHTML = html;
+    }
+
+    document.getElementById("continueToTheoryBtn").addEventListener("click", () => {
+      document.getElementById("preTestFeedbackView").classList.add("hidden");
+      startTheoryStage();
+    });
+
+    function showPostTestFeedback() {
+      simulatorView.classList.add("hidden");
+      const feedbackView = document.getElementById("postTestFeedbackView");
+      feedbackView.classList.remove("hidden");
+      
+      let totalAcc = 0;
+      let html = "";
+      
+      procedureOrder.forEach(procKey => {
+        const proc = procedures[procKey];
+        const res = postTestResults[procKey];
+        totalAcc += res.accuracy;
+        
+        let colorClass = res.accuracy >= 90 ? "text-emerald-400" : res.accuracy >= 70 ? "text-amber-400" : "text-rose-400";
+        let tip = res.accuracy >= 90 
+          ? "Excellent clinical precision." 
+          : res.meanError > 10 
+            ? "Still struggling with spatial landmarks. Consider reviewing the walkthrough." 
+            : "Check your ergonomic triangulation angles to prevent clashing.";
+        
+        html += `
+          <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 flex justify-between items-center">
+            <div>
+              <div class="font-bold text-white">${proc.name}</div>
+              <div class="text-xs text-slate-400 mt-0.5">Mean Error: ${res.meanError}% | Angle: ${res.angle}°</div>
+              <div class="text-[11px] text-slate-500 mt-1 italic">${tip}</div>
+            </div>
+            <div class="text-2xl font-bold font-mono ${colorClass}">${res.accuracy}%</div>
+          </div>
+        `;
+      });
+      
+      document.getElementById("feedbackPostOverallScore").textContent = `${Math.round(totalAcc / procedureOrder.length)}%`;
+      document.getElementById("feedbackPostProceduresContainer").innerHTML = html;
+    }
+
+    document.getElementById("continueToAnalyticsBtn").addEventListener("click", () => {
+      document.getElementById("postTestFeedbackView").classList.add("hidden");
+      if (typeof startAnalyticsStage === "function") startAnalyticsStage();
+    });
+
+    function startTheoryStage() {
+      workflowStage = "theory";
+      updateStageStepperUI(3);
+      registrationView.classList.add("hidden");
+      simulatorView.classList.add("hidden");
+      analyticsView.classList.add("hidden");
+      theoryView.classList.remove("hidden");
+      goToTheoryPage(1);
+    }
+
+    document.getElementById("skipToWalkthroughBtn").addEventListener("click", () => {
+      startWalkthroughStage();
+    });
+
+    function startWalkthroughStage() {
+      workflowStage = "walkthrough";
+      updateStageStepperUI(4);
+      currentProcedureKey = "chole";
+      walkthroughVisited = new Set(["chole"]);
+      currentMode = "study";
+
+      theoryView.classList.add("hidden");
+      analyticsView.classList.add("hidden");
+      simulatorView.classList.remove("hidden");
+
+      document.getElementById("simulatorToolbar").classList.remove("hidden");
+      document.getElementById("selectorCard").classList.remove("hidden");
+      document.getElementById("sandboxModeToggleWrapper").classList.add("hidden");
+      document.getElementById("studyPanel").classList.remove("hidden");
+      document.getElementById("practicePanel").classList.add("hidden");
+      document.getElementById("walkthroughNavBox").classList.remove("hidden");
+      document.getElementById("walkthroughProgressBadge").classList.remove("hidden");
+
+      document.getElementById("procedureSelect").value = "chole";
+      updateWalkthroughUI();
+      render();
+    }
+
+    function updateWalkthroughUI() {
+      const proc = procedures[currentProcedureKey];
+      walkthroughVisited.add(currentProcedureKey);
+      const visitedCount = walkthroughVisited.size;
+
+      document.getElementById("simBannerStageTag").textContent = "Stage 4 of 6 • Guided Procedure Walkthrough";
+      document.getElementById("simBannerStageTag").className = "text-xs font-bold uppercase tracking-widest text-emerald-400";
+      document.getElementById("simBannerTitle").textContent = `Walkthrough: ${proc.name}`;
+      document.getElementById("simBannerSub").textContent = "Hover over each trocar on the torso to study its anatomical landmark, triangulation vector, and patient habitus variations.";
+      document.getElementById("walkthroughProgressBadge").textContent = `Reviewed: ${visitedCount} / 5`;
+
+      const nextBtn = document.getElementById("walkthroughNextProcBtn");
+      const currentIdx = procedureOrder.indexOf(currentProcedureKey);
+      if (currentIdx < procedureOrder.length - 1) {
+        const nextProcName = procedures[procedureOrder[currentIdx + 1]].name;
+        nextBtn.textContent = `Next Procedure: ${nextProcName} →`;
+      } else {
+        nextBtn.textContent = "Proceed to Stage 5: Post-Training Exam (5 Procedures) 🎯";
+      }
+    }
+
+    document.getElementById("walkthroughNextProcBtn").addEventListener("click", () => {
+      const currentIdx = procedureOrder.indexOf(currentProcedureKey);
+      if (currentIdx < procedureOrder.length - 1) {
+        currentProcedureKey = procedureOrder[currentIdx + 1];
+        document.getElementById("procedureSelect").value = currentProcedureKey;
+        updateWalkthroughUI();
+        render();
+      } else {
+        startBlindedExamStage("posttest");
+      }
+    });
+
+    const postConfidenceSlider = document.getElementById("postConfidenceSlider");
+    const postConfidenceReadout = document.getElementById("postConfidenceReadout");
+    postConfidenceSlider.addEventListener("input", (e) => {
+      postConfidenceReadout.textContent = `${e.target.value} / 10`;
+    });
+
+    function startAnalyticsStage() {
+      workflowStage = "analytics";
+      updateStageStepperUI(6);
+      simulatorView.classList.add("hidden");
+      theoryView.classList.add("hidden");
+      analyticsView.classList.remove("hidden");
+      document.getElementById("postConfidencePromptCard").classList.remove("hidden");
+      document.getElementById("analyticsReportContent").classList.add("hidden");
+    }
+
+    document.getElementById("generateReportBtn").addEventListener("click", () => {
+      traineeProfile.postConfidence = parseInt(postConfidenceSlider.value, 10);
+      document.getElementById("postConfidencePromptCard").classList.add("hidden");
+      document.getElementById("analyticsReportContent").classList.remove("hidden");
+      renderAnalyticsReportAndSave();
+    });
+
+    function renderAnalyticsReportAndSave() {
+      // 1. Update the Header Info
+      document.getElementById("reportTraineeHeader").textContent = `${traineeProfile.name} — Pre vs. Post Training Analysis`;
+      document.getElementById("reportMetaSub").textContent = `Role: ${traineeProfile.role} | Completed: ${new Date().toLocaleDateString()} | Tested Across All 5 Core Laparoscopic Procedures`;
+
+      // 2. Initialize tracking variables
+      let sumPreAcc = 0, sumPostAcc = 0, sumPreErr = 0, sumPostErr = 0;
+      let tableHtml = "";
+      let barsHtml = "";
+
+      // 3. Loop through all procedures and generate the table and bar charts
+      procedureOrder.forEach((key) => {
+        const proc = procedures[key];
+        const pre = preTestResults[key] || { accuracy: 0, meanError: 0, angle: 0 };
+        const post = postTestResults[key] || { accuracy: 0, meanError: 0, angle: 0 };
+
+        sumPreAcc += pre.accuracy;
+        sumPostAcc += post.accuracy;
+        sumPreErr += pre.meanError;
+        sumPostErr += post.meanError;
+
+        const deltaAcc = post.accuracy - pre.accuracy;
+        const deltaSign = deltaAcc >= 0 ? `+${deltaAcc}%` : `${deltaAcc}%`;
+        const deltaClass = deltaAcc >= 0 ? "text-emerald-400" : "text-rose-400";
+
+        tableHtml += `
+          <tr class="hover:bg-slate-900/50">
+            <td class="py-3 px-4 font-bold text-white">${proc.name}</td>
+            <td class="py-3 px-4 font-mono text-slate-300">${pre.accuracy}%</td>
+            <td class="py-3 px-4 font-mono font-bold text-emerald-400">${post.accuracy}%</td>
+            <td class="py-3 px-4 font-mono font-bold ${deltaClass}">${deltaSign}</td>
+            <td class="py-3 px-4 font-mono text-slate-300">${pre.meanError}% → <span class="text-sky-400 font-bold">${post.meanError}%</span></td>
+            <td class="py-3 px-4 font-mono text-slate-300">${pre.angle}° → <span class="text-emerald-300 font-bold">${post.angle}°</span></td>
+          </tr>
+        `;
+
+        barsHtml += `
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="font-bold text-slate-200">${proc.name}</span>
+              <span class="font-mono text-slate-400">Pre: ${pre.accuracy}% | <strong class="text-emerald-400">Post: ${post.accuracy}%</strong></span>
+            </div>
+            <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden flex gap-1 p-0.5 border border-slate-700">
+              <div class="bg-slate-500 h-full rounded-full" style="width: ${pre.accuracy}%"></div>
+            </div>
+            <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden flex gap-1 p-0.5 border border-slate-700">
+              <div class="bg-emerald-500 h-full rounded-full" style="width: ${post.accuracy}%"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      // 4. Calculate Cohort Averages
+      const avgPreAcc = Math.round(sumPreAcc / procedureOrder.length);
+      const avgPostAcc = Math.round(sumPostAcc / procedureOrder.length);
+      const avgDeltaAcc = avgPostAcc - avgPreAcc;
+
+      const avgPreErr = parseFloat((sumPreErr / procedureOrder.length).toFixed(1));
+      const avgPostErr = parseFloat((sumPostErr / procedureOrder.length).toFixed(1));
+      const errReduction = (avgPreErr - avgPostErr).toFixed(1);
+      const confDelta = traineeProfile.postConfidence - traineeProfile.preConfidence;
+      
+      // Safety check in case the quiz array isn't loaded yet
+      const quizPct = typeof quizQuestions !== "undefined" && quizQuestions.length > 0 
+          ? Math.round((quizCorrectCount / quizQuestions.length) * 100) 
+          : 0;
+
+      // 5. Update the DOM Elements (Top Cards)
+      document.getElementById("statPreAcc").textContent = `${avgPreAcc}%`;
+      document.getElementById("statPostAcc").textContent = `${avgPostAcc}%`;
+      document.getElementById("statDeltaAcc").textContent = `${avgDeltaAcc >= 0 ? '+' : ''}${avgDeltaAcc}% Accuracy Gain`;
+
+      document.getElementById("statPreErr").textContent = `${avgPreErr}%`;
+      document.getElementById("statPostErr").textContent = `${avgPostErr}%`;
+      document.getElementById("statDeltaErr").textContent = `${errReduction >= 0 ? '-' : '+'}${Math.abs(errReduction)}% Spatial Error Reduction`;
+
+      document.getElementById("statPreConf").textContent = `${traineeProfile.preConfidence}/10`;
+      document.getElementById("statPostConf").textContent = `${traineeProfile.postConfidence}/10`;
+      document.getElementById("statDeltaConf").textContent = `${confDelta >= 0 ? '+' : ''}${confDelta} Point Shift`;
+
+      if (document.getElementById("statQuizScore")) {
+          document.getElementById("statQuizScore").textContent = `${quizPct}%`;
+          document.getElementById("statQuizSub").textContent = `${typeof quizCorrectCount !== 'undefined' ? quizCorrectCount : 0} MCQs Correct`;
+      }
+
+      document.getElementById("analyticsTableBody").innerHTML = tableHtml;
+      document.getElementById("visualBarsContainer").innerHTML = barsHtml;
+
+      // 6. Save to Persistent Cohort Database for Teacher Section
+      // Includes the new Timer logic!
+      const studentRecord = {
+        timestamp: new Date().toLocaleString(),
+        name: traineeProfile.name,
+        role: traineeProfile.role,
+        preConfidence: traineeProfile.preConfidence,
+        postConfidence: traineeProfile.postConfidence,
+        preOverallAcc: avgPreAcc,
+        postOverallAcc: avgPostAcc,
+        preOverallErr: avgPreErr,
+        postOverallErr: avgPostErr,
+        quizScorePct: quizPct,
+        preTestTimeSecs: typeof preTestDuration !== 'undefined' ? preTestDuration : 0,
+        postTestTimeSecs: typeof postTestDuration !== 'undefined' ? postTestDuration : 0,
+        preResults: JSON.parse(JSON.stringify(preTestResults)),
+        postResults: JSON.parse(JSON.stringify(postTestResults))
+      };
+      
+      if (typeof saveStudentRunToCohort === "function") {
+          saveStudentRunToCohort(studentRecord);
+      } else {
+          // Fallback if the function is named differently in your base code
+          const list = JSON.parse(localStorage.getItem(typeof DB_KEY !== 'undefined' ? DB_KEY : "lapport_cohort_v3")) || [];
+          list.push(studentRecord);
+          localStorage.setItem(typeof DB_KEY !== 'undefined' ? DB_KEY : "lapport_cohort_v3", JSON.stringify(list));
+      }
+    }
+    document.getElementById("restartCurriculumBtn").addEventListener("click", () => {
+      preTestResults = {};
+      postTestResults = {};
+      workflowStage = "registration";
+      updateStageStepperUI(1);
+      analyticsView.classList.add("hidden");
+      registrationView.classList.remove("hidden");
+    });
+
+    toggleSandboxBtn.addEventListener("click", () => {
+      teacherAuthSection.classList.add("hidden");
+      teacherDashboardSection.classList.add("hidden");
+      if (workflowStage !== "sandbox") {
+        workflowStage = "sandbox";
+        toggleSandboxBtn.textContent = "🎓 Return to Curriculum";
+        document.getElementById("curriculumStepper").classList.add("hidden");
+
+        registrationView.classList.add("hidden");
+        theoryView.classList.add("hidden");
+        analyticsView.classList.add("hidden");
+        simulatorView.classList.remove("hidden");
+
+        document.getElementById("simBannerStageTag").textContent = "Free Exploration Mode";
+        document.getElementById("simBannerStageTag").className = "text-xs font-bold uppercase tracking-widest text-sky-400";
+        document.getElementById("simBannerTitle").textContent = "Interactive Port Placement Sandbox";
+        document.getElementById("simBannerSub").textContent = "Freely switch between Study Mode, Practice Mode, Patient Habitus Models, and Procedures with instant feedback.";
+
+        document.getElementById("simulatorToolbar").classList.remove("hidden");
+        document.getElementById("selectorCard").classList.remove("hidden");
+        document.getElementById("sandboxModeToggleWrapper").classList.remove("hidden");
+        document.getElementById("walkthroughNavBox").classList.add("hidden");
+        document.getElementById("walkthroughProgressBadge").classList.add("hidden");
+        document.getElementById("examActionBtn").textContent = "Evaluate Placement";
+
+        setMode("study");
+      } else {
+        toggleSandboxBtn.textContent = "🔓 Free Sandbox";
+        document.getElementById("curriculumStepper").classList.remove("hidden");
+        workflowStage = "registration";
+        updateStageStepperUI(1);
+        simulatorView.classList.add("hidden");
+        registrationView.classList.remove("hidden");
+      }
+    });
+
+    // =========================================================================
+    // 6. THEORY MODULE NAVIGATION, INTERACTIVE OR DIAGRAM & SANDBOX
+    // =========================================================================
+    let currentTheoryPage = 1;
+    const totalTheoryPages = 5;
+    const pageTitles = [
+      "Laparoscopic vs. Open Surgery & Contraindications",
+      "Ergonomics & Triangulation Geometry",
+      "Interactive Operating Room Setup & Patient Positioning",
+      "Peritoneal Access & Abdominal Wall Anatomy",
+      "Theory Module Knowledge Check"
+    ];
+
+    window.goToTheoryPage = function(pageNum) {
+      currentTheoryPage = Math.max(1, Math.min(totalTheoryPages, pageNum));
+      for (let i = 1; i <= totalTheoryPages; i++) {
+        const pageEl = document.getElementById(`theoryPage_${i}`);
+        const stepBtn = document.getElementById(`stepBtn_${i}`);
+        if (i === currentTheoryPage) {
+          pageEl.classList.remove("hidden");
+          stepBtn.className = "text-left p-2.5 rounded-xl border text-xs transition bg-emerald-600/20 border-emerald-500 text-white font-semibold shadow";
+        } else {
+          pageEl.classList.add("hidden");
+          stepBtn.className = "text-left p-2.5 rounded-xl border text-xs transition bg-slate-900/60 border-slate-700 text-slate-400 hover:text-white";
+        }
+      }
+
+      document.getElementById("moduleStepLabel").textContent = `Stage 3 of 6 • Theory Module (Page ${currentTheoryPage} of ${totalTheoryPages})`;
+      document.getElementById("moduleMainTitle").textContent = pageTitles[currentTheoryPage - 1];
+      document.getElementById("courseProgressBar").style.width = `${(currentTheoryPage / totalTheoryPages) * 100}%`;
+      document.getElementById("bottomPageIndicator").textContent = `Page ${currentTheoryPage} of ${totalTheoryPages}`;
+
+      document.getElementById("prevPageBtn").disabled = currentTheoryPage === 1;
+      document.getElementById("nextPageBtn").textContent = currentTheoryPage === totalTheoryPages
+        ? "Complete Theory & Start Stage 4: Walkthrough →"
+        : "Next Lesson →";
+    };
+
+    document.getElementById("prevPageBtn").addEventListener("click", () => {
+      if (currentTheoryPage > 1) goToTheoryPage(currentTheoryPage - 1);
+    });
+
+    document.getElementById("nextPageBtn").addEventListener("click", () => {
+      if (currentTheoryPage < totalTheoryPages) {
+        goToTheoryPage(currentTheoryPage + 1);
+      } else {
+        startWalkthroughStage();
+      }
+    });
+
+    const orDiagramSelect = document.getElementById("orDiagramSelect");
+    function updateOrDiagram() {
+      const key = orDiagramSelect.value;
+      const cfg = orSetupData[key];
+
+      document.getElementById("orDetailTitle").textContent = cfg.title;
+      document.getElementById("orTiltText").textContent = cfg.tilt;
+      document.getElementById("orTeamText").textContent = cfg.team;
+      document.getElementById("orSafetyText").textContent = cfg.safety;
+
+      document.getElementById("orLegsSupine").classList.toggle("hidden", cfg.lithotomy);
+      document.getElementById("orLegsLithotomy").classList.toggle("hidden", !cfg.lithotomy);
+
+      const targetDot = document.getElementById("orTargetDot");
+      targetDot.setAttribute("cx", cfg.target.x);
+      targetDot.setAttribute("cy", cfg.target.y);
+
+      document.getElementById("orSurgeonNode").setAttribute("transform", `translate(${cfg.surgeon.x}, ${cfg.surgeon.y})`);
+      document.getElementById("orAssistantNode").setAttribute("transform", `translate(${cfg.assistant.x}, ${cfg.assistant.y})`);
+      document.getElementById("orNurseNode").setAttribute("transform", `translate(${cfg.nurse.x}, ${cfg.nurse.y})`);
+
+      const mon1 = document.getElementById("orMonitorMain");
+      mon1.setAttribute("transform", `translate(${cfg.mon1.x - 113}, ${cfg.mon1.y - 97})`);
+      const mon2 = document.getElementById("orMonitorSec");
+      mon2.setAttribute("transform", `translate(${cfg.mon2.x - 388}, ${cfg.mon2.y - 97})`);
+
+      const sightline = document.getElementById("orSightline");
+      sightline.setAttribute("x1", cfg.surgeon.x);
+      sightline.setAttribute("y1", cfg.surgeon.y);
+      sightline.setAttribute("x2", cfg.mon1.x);
+      sightline.setAttribute("y2", cfg.mon1.y);
+    }
+    orDiagramSelect.addEventListener("change", updateOrDiagram);
+
+    const alphaSlider = document.getElementById("alphaSlider");
+    const elevSlider = document.getElementById("elevSlider");
+    function updateTheorySandbox() {
+      const alpha = parseInt(alphaSlider.value, 10);
+      const elev = parseInt(elevSlider.value, 10);
+      const halfRad = ((alpha / 2) * Math.PI) / 180;
+      const radius = 175 - (elev - 45) * 0.8;
+
+      const lx = Math.round(200 - radius * Math.sin(halfRad));
+      const ly = Math.round(55 + radius * Math.cos(halfRad));
+      const rx = Math.round(200 + radius * Math.sin(halfRad));
+      const ry = ly;
+
+      document.getElementById("sbLeftLine").setAttribute("x1", lx);
+      document.getElementById("sbLeftLine").setAttribute("y1", ly);
+      document.getElementById("sbRightLine").setAttribute("x1", rx);
+      document.getElementById("sbRightLine").setAttribute("y1", ry);
+      document.getElementById("sbLeftPort").setAttribute("cx", lx);
+      document.getElementById("sbLeftPort").setAttribute("cy", ly);
+      document.getElementById("sbLeftLabel").setAttribute("x", lx);
+      document.getElementById("sbLeftLabel").setAttribute("y", ly + 20);
+      document.getElementById("sbRightPort").setAttribute("cx", rx);
+      document.getElementById("sbRightPort").setAttribute("cy", ry);
+      document.getElementById("sbRightLabel").setAttribute("x", rx);
+      document.getElementById("sbRightLabel").setAttribute("y", ry + 20);
+      document.getElementById("sbCanvasAngle").textContent = `α = ${alpha}° (β = ${Math.round(alpha / 2)}°)`;
+
+      const alphaGood = alpha >= 45 && alpha <= 75;
+      const elevGood = elev >= 30 && elev <= 60;
+      const alphaReadout = document.getElementById("alphaReadout");
+      const elevReadout = document.getElementById("elevReadout");
+      const sandboxFeedback = document.getElementById("sandboxFeedback");
+
+      alphaReadout.textContent = `${alpha}° (${alphaGood ? 'Optimal: 45°–75°' : alpha < 45 ? 'Too Narrow' : 'Too Wide'})`;
+      alphaReadout.className = `font-mono font-bold ${alphaGood ? 'text-emerald-400' : 'text-amber-400'}`;
+      elevReadout.textContent = `${elev}° (${elevGood ? 'Optimal: 30°–60°' : elev < 30 ? 'Too Shallow' : 'Too Steep'})`;
+      elevReadout.className = `font-mono font-bold ${elevGood ? 'text-emerald-400' : 'text-amber-400'}`;
+
+      if (alpha < 45) {
+        sandboxFeedback.className = "text-xs p-3 rounded-lg bg-rose-950/60 border border-rose-500/40 text-rose-200 leading-relaxed";
+        sandboxFeedback.innerHTML = `<strong>Warning — Instrument "Sword-Fighting" (α = ${alpha}°):</strong> Working ports are too close together. External handles collide.`;
+      } else if (alpha > 75) {
+        sandboxFeedback.className = "text-xs p-3 rounded-lg bg-amber-950/60 border border-amber-500/40 text-amber-200 leading-relaxed";
+        sandboxFeedback.innerHTML = `<strong>Warning — Excessive Shoulder Abduction (α = ${alpha}°):</strong> Ports are spread too wide, causing rapid deltoid fatigue.`;
+      } else {
+        sandboxFeedback.className = "text-xs p-3 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 leading-relaxed";
+        sandboxFeedback.innerHTML = `<strong>Ergonomic Sweet Spot (α = ${alpha}°, Elevation = ${elev}°):</strong> Optimal triangulation on either side of the optical axis.`;
+      }
+    }
+    alphaSlider.addEventListener("input", updateTheorySandbox);
+    elevSlider.addEventListener("input", updateTheorySandbox);
+
+    // =========================================================================
+    // 7. THEORY QUIZ LOGIC
+    // =========================================================================
+    const quizQuestions = [
+      {
+        q: "Which of the following is considered an absolute contraindication to laparoscopic surgery?",
+        options: ["Previous midline laparotomy", "Morbid obesity (BMI > 40)", "Inability to tolerate pneumoperitoneum due to severe cardiopulmonary disease", "First trimester of pregnancy"],
+        correct: 2,
+        explanation: "Severe cardiopulmonary disease is an absolute contraindication. The increased intra-abdominal pressure from the CO2 pneumoperitoneum reduces venous return and pushes the diaphragm upward, which can cause respiratory and cardiac collapse."
+      },
+      {
+        q: "What is the optimal 'Manipulation Angle' (the angle between the surgeon's left and right working instruments)?",
+        options: ["15° to 30°", "45° to 75° (ideal ~60°)", "90° to 120°", "Always strictly 90°"],
+        correct: 1,
+        explanation: "A manipulation angle of 45° to 75° (ideally 60°) is optimal. Less than 45° causes the instruments to clash. Greater than 75° forces the surgeon to splay their arms, leading to fatigue."
+      },
+      {
+        q: "During a Laparoscopic Anterior Resection, what is the correct orientation of the Surgeon, Monitor, and Target Organ?",
+        options: ["Surgeon on Patient's Right → Target (Pelvis) → Monitor on Patient's Left Hip", "Surgeon between the legs → Target (Upper GI) → Monitor over Patient's Head", "Surgeon on Patient's Left → Target (RUQ) → Monitor over Patient's Right Shoulder", "Surgeon on Patient's Left → Target (Spleen) → Monitor over Patient's Right Hip"],
+        correct: 0,
+        explanation: "For pelvic surgery (Anterior Resection), the surgeon stands on the patient's Right (or sometimes between the legs) and looks toward the pelvis. The primary monitor should be placed near the patient's Left Hip to maintain the co-axial line."
+      },
+      {
+        q: "To avoid injuring the inferior epigastric vessels during lateral port placement, what is a safe anatomical guideline?",
+        options: ["Place ports directly through the center of the rectus abdominis muscle.", "Place ports lateral to the rectus sheath (linea semilunaris), generally at least 6-8 cm lateral to the midline.", "Place ports exactly midway between the umbilicus and the xiphoid process.", "Place ports inferior to the pubic tubercle."],
+        correct: 1,
+        explanation: "The inferior epigastric vessels run deep to the rectus abdominis. Placing lateral ports lateral to the rectus sheath (the Rule of Thirds) under direct vision minimizes the risk of vascular injury."
+      },
+      {
+        q: "During a standard 4-port Laparoscopic Cholecystectomy, what is the ideal landmark for the primary right-hand operating port (epigastric port)?",
+        options: ["Right anterior axillary line, level with the umbilicus.", "Right subcostal margin along the mid-clavicular line.", "2–3 cm below the xiphoid process, just to the right of the midline to avoid the falciform ligament.", "Directly through the umbilical ring."],
+        correct: 2,
+        explanation: "The subxiphoid/epigastric port is the primary working port for the surgeon's right hand. It is placed just off the midline to safely avoid the falciform ligament while providing a direct line of sight to Calot's triangle."
+      },
+      {
+        q: "When placing the suprapubic port for a Laparoscopic Appendicectomy, which of the following is the correct landmark and key safety precaution?",
+        options: ["Midline, 2–3 cm superior to the pubic symphysis; ensure the urinary bladder is decompressed with a catheter.", "Left lower quadrant; visually avoid the inferior epigastric vessels.", "Right Iliac Fossa; use a Hasson open technique to avoid cecal injury.", "Palmer's Point; use a Veress needle for initial pneumoperitoneum."],
+        correct: 0,
+        explanation: "Because it is placed so low in the midline (2-3 cm above the pubic symphysis), the dome of the bladder is at high risk of injury if it is not decompressed prior to surgery."
+      },
+      {
+        q: "After establishing the umbilical optical port for a Right Laparoscopic Inguinal Hernia Repair (TAPP), where are the two 5mm working ports typically placed?",
+        options: ["Suprapubic midline and Right Iliac Fossa.", "Right and Left Mid-clavicular lines, roughly level with the umbilicus.", "Right Upper Quadrant and Left Lower Quadrant.", "Subxiphoid and Right anterior axillary line."],
+        correct: 1,
+        explanation: "For a TAPP repair, the surgeon places the working ports on the right and left mid-clavicular lines at the level of the umbilicus. This creates an optimal 45°–75° manipulation angle aimed downwards into the pelvis."
+      },
+      {
+        q: "During a Left Inguinal Hernia Repair (TAPP), where should the ipsilateral (left-hand) working port be placed to avoid the inferior epigastrics?",
+        options: ["Left mid-clavicular line, level with the umbilicus.", "Directly over the left deep inguinal ring.", "Subxiphoid midline.", "Left anterior axillary line, subcostal margin."],
+        correct: 0,
+        explanation: "The ipsilateral port for a left hernia is placed in the left mid-clavicular line. It must be placed lateral enough to avoid the inferior epigastric vessels."
+      },
+      {
+        q: "In a 4-port Laparoscopic Anterior Resection, where is the surgeon's primary 10–12mm operating/stapling port typically placed?",
+        options: ["Supra-umbilical midline.", "Left Iliac Fossa (LIF).", "Right Upper Quadrant (RUQ).", "Right Iliac Fossa (RIF)."],
+        correct: 3,
+        explanation: "The Right Iliac Fossa (RIF) port is the primary right-hand port for the surgeon. It requires a larger 10-12mm trocar to introduce the linear stapler to divide the inferior mesenteric artery (IMA)."
+      },
+      {
+        q: "Where is Palmer's Point located, and when is it typically used for initial entry?",
+        options: ["Right upper quadrant (RUQ); used for obese patients.", "Left upper quadrant (LUQ), 3 cm below the left costal margin in the mid-clavicular line; used when the patient has a previous midline laparotomy scar.", "Right iliac fossa (RIF); used for appendicectomies.", "Suprapubic midline; used for pelvic surgery."],
+        correct: 1,
+        explanation: "Palmer's Point is safely away from the midline, making it the preferred entry site for patients with suspected midline adhesions from previous laparotomies."
+      },
+      {
+        q: "What is the primary function of the RUQ Anterior Axillary port in a Laparoscopic Cholecystectomy?",
+        options: ["Primary optical port.", "Primary right-hand operating port.", "Left-hand grasping port.", "Assistant port to grasp gallbladder fundus and retract it cephalad."],
+        correct: 3,
+        explanation: "The RUQ Anterior Axillary port is generally a 5mm port used by the assistant to grasp the fundus of the gallbladder and retract it over the liver, providing exposure of Calot's triangle."
+      },
+      {
+        q: "During a Laparoscopic Appendicectomy, where is the primary working port for the surgeon's right hand usually placed?",
+        options: ["Umbilicus.", "Left Iliac Fossa (LIF).", "Right Iliac Fossa (RIF).", "Suprapubic midline."],
+        correct: 1,
+        explanation: "The Left Iliac Fossa (LIF) port is the primary working port, allowing the surgeon to triangulate across the midline toward the right lower quadrant where the appendix is located."
+      },
+      {
+        q: "Why is the Hasson open cut-down method preferred by many for primary umbilical access?",
+        options: ["It is the fastest method.", "It eliminates the risk of bowel injury.", "It virtually eliminates the risk of blind retroperitoneal great-vessel injury.", "It allows for a smaller incision."],
+        correct: 2,
+        explanation: "By dissecting down to the peritoneum under direct vision, the Hasson open technique avoids plunging sharp needles or trocars blindly into the abdomen, thereby almost entirely removing the risk of catastrophic injury to the aorta or IVC."
+      },
+      {
+        q: "If a patient has a dense midline scar from a previous laparotomy, which initial entry approach is safest?",
+        options: ["Hasson technique at the umbilicus.", "Veress needle at the umbilicus.", "Veress needle or optical trocar at Palmer's Point.", "Blind trocar insertion in the right iliac fossa."],
+        correct: 2,
+        explanation: "Palmer's point (left upper quadrant) is generally free of adhesions even if there are dense midline scars, making it a safe alternative access site."
+      },
+      {
+        q: "Which fascial defect size dictates formal fascial closure to prevent port-site hernias?",
+        options: ["Only 15mm ports or larger.", "All ports ≥ 10mm.", "Only ports placed in the midline.", "5mm ports."],
+        correct: 1,
+        explanation: "General surgical principles dictate that the fascia of any port site 10mm or larger must be formally closed, as these carry a significantly higher risk of a Richter's hernia."
+      },
+      {
+        q: "What is the danger of placing a working port too close to the camera port (e.g. < 5-8cm apart)?",
+        options: ["It increases the risk of vascular injury.", "It creates an overly wide manipulation angle.", "It causes 'sword-fighting' (instrument clashing) and poor ergonomics.", "It requires a larger incision."],
+        correct: 2,
+        explanation: "Placing ports too closely together reduces the manipulation angle well below the optimal 45 degrees. The shafts of the instruments will clash both internally and externally, severely restricting the surgeon's range of motion."
+      }
+    ];
+
+    let quizAnsweredCount = 0;
+    let quizCorrectCount = 0;
+
+    function renderTheoryQuiz() {
+      const container = document.getElementById("quizContainer");
+      if (!container) return; 
+
+      container.innerHTML = quizQuestions.map((item, qIdx) => `
+        <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div class="text-xs font-bold text-white leading-relaxed">${item.q}</div>
+          <div class="space-y-2" id="qOptions_${qIdx}">
+            ${item.options.map((opt, oIdx) => `
+              <button onclick="answerQuiz(${qIdx}, ${oIdx})" class="w-full text-left text-xs bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-200 transition">
+                ${opt}
+              </button>
+            `).join("")}
+          </div>
+          <div id="qFeedback_${qIdx}" class="hidden text-xs p-2.5 rounded-lg mt-2"></div>
+        </div>
+      `).join("");
+    }
+
+    window.answerQuiz = function(qIdx, selectedIdx) {
+      const item = quizQuestions[qIdx];
+      const optionsBox = document.getElementById(`qOptions_${qIdx}`);
+      const feedbackBox = document.getElementById(`qFeedback_${qIdx}`);
+      
+      if (!feedbackBox.classList.contains("hidden")) return; 
+
+      quizAnsweredCount++;
+      const isCorrect = selectedIdx === item.correct;
+      if (isCorrect) quizCorrectCount++;
+
+      Array.from(optionsBox.children).forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === item.correct) {
+          btn.className = "w-full text-left text-xs bg-emerald-900/60 border border-emerald-500 rounded-lg px-3 py-2 text-emerald-200 font-semibold";
+        } else if (idx === selectedIdx) {
+          btn.className = "w-full text-left text-xs bg-rose-900/60 border border-rose-500 rounded-lg px-3 py-2 text-rose-200";
+        } else {
+          btn.className = "w-full text-left text-xs bg-slate-800/40 border border-slate-700 rounded-lg px-3 py-2 text-slate-500 opacity-50";
+        }
+      });
+
+      feedbackBox.classList.remove("hidden");
+      feedbackBox.className = `text-xs p-2.5 rounded-lg border ${
+        isCorrect ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-200" : "bg-rose-950/60 border-rose-500/40 text-rose-200"
+      }`;
+      feedbackBox.innerHTML = `<strong>${isCorrect ? "Correct!" : "Not quite."}</strong> ${item.explanation}`;
+      
+      const badge = document.getElementById("quizScoreBadge");
+      if (badge) {
+          badge.textContent = `Theory Quiz: ${quizCorrectCount} / 16 answered`;
+      }
+    };
+
+    // =========================================================================
+    // 7. TORSO RENDERING & INTERACTION ENGINE
+    // =========================================================================
+    const torsoContainer = document.getElementById("torsoContainer");
+    const portsLayer = document.getElementById("portsLayer");
+    const linesLayer = document.getElementById("linesLayer");
+    const coordDisplay = document.getElementById("coordDisplay");
+    const angleBadge = document.getElementById("angleBadge");
+    const coordToggle = document.getElementById("coordToggle");
+    const vesselToggle = document.getElementById("vesselToggle");
+    const organToggle = document.getElementById("organToggle");
+    const triangulationToggle = document.getElementById("triangulationToggle");
+    const targetOrgansLayer = document.getElementById("targetOrgansLayer");
+    const epigastricVessels = document.getElementById("epigastricVessels");
+    const procedureSelect = document.getElementById("procedureSelect");
+    const patientModelSelect = document.getElementById("patientModelSelect");
+    const patientNoteBox = document.getElementById("patientNoteBox");
+    const procedureSummary = document.getElementById("procedureSummary");
+    const studyModeBtn = document.getElementById("studyModeBtn");
+    const practiceModeBtn = document.getElementById("practiceModeBtn");
+    const studyPanel = document.getElementById("studyPanel");
+    const practicePanel = document.getElementById("practicePanel");
+    const portList = document.getElementById("portList");
+    const placementCounter = document.getElementById("placementCounter");
+    const currentPortPrompt = document.getElementById("currentPortPrompt");
+    const currentPortHint = document.getElementById("currentPortHint");
+    const currentPromptBox = document.getElementById("currentPromptBox");
+    const examActionBtn = document.getElementById("examActionBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const resultsBox = document.getElementById("resultsBox");
+
+    const svgTorsoBase = document.getElementById("svgTorsoBase");
+    const pannusOverlay = document.getElementById("pannusOverlay");
+    const scarOverlay = document.getElementById("scarOverlay");
+    const umbilicusCircle = document.getElementById("umbilicusCircle");
+    const umbilicusCrease = document.getElementById("umbilicusCrease");
+    const umbilicusText = document.getElementById("umbilicusText");
+
+    const bgImageInput = document.getElementById("bgImageInput");
+    const customAbdomenImg = document.getElementById("customAbdomenImg");
+    const surfaceLandmarksGroup = document.getElementById("surfaceLandmarksGroup");
+    const clearBgBtn = document.getElementById("clearBgBtn");
+    const opacityControl = document.getElementById("opacityControl");
+    const landmarkOpacity = document.getElementById("landmarkOpacity");
+
+    function getActiveIdealPorts() {
+      const proc = procedures[currentProcedureKey];
+      const overrides = (proc.modelOverrides && proc.modelOverrides[currentPatientModelKey]) || [];
+      return proc.ports.map((port, idx) => ({
+        ...port,
+        ...(overrides[idx] || {})
+      }));
+    }
+
+    function updatePatientModelVisuals() {
+      const model = patientModels[currentPatientModelKey];
+      patientNoteBox.innerHTML = model.clinicalNote;
+      svgTorsoBase.setAttribute("d", model.silhouettePath);
+      pannusOverlay.classList.toggle("hidden", currentPatientModelKey !== "obese");
+      scarOverlay.classList.toggle("hidden", currentPatientModelKey !== "scar");
+
+      const uy = model.umbilicusY;
+      umbilicusCircle.setAttribute("cy", uy);
+      umbilicusCrease.setAttribute("d", `M 196,${uy - 2} Q 200,${uy + 3} 204,${uy - 2}`);
+      umbilicusText.setAttribute("y", uy + 4);
+      umbilicusText.textContent = currentPatientModelKey === "obese" ? "Umbilicus (Displaced)" : "Umbilicus";
+
+      if (manualPhotoDataUrl) {
+        showPhotoLayer(manualPhotoDataUrl);
+        return;
+      }
+
+      const testImg = new Image();
+      testImg.onload = () => showPhotoLayer(model.imageFile);
+      testImg.onerror = () => hidePhotoLayer();
+      testImg.src = model.imageFile;
+    }
+
+    function showPhotoLayer(src) {
+      customAbdomenImg.src = src;
+      customAbdomenImg.classList.remove("hidden");
+      svgTorsoBase.classList.add("hidden");
+      opacityControl.classList.remove("hidden");
+      opacityControl.classList.add("flex");
+      surfaceLandmarksGroup.style.opacity = landmarkOpacity.value / 100;
+    }
+
+    function hidePhotoLayer() {
+      customAbdomenImg.src = "";
+      customAbdomenImg.classList.add("hidden");
+      svgTorsoBase.classList.remove("hidden");
+      opacityControl.classList.add("hidden");
+      opacityControl.classList.remove("flex");
+      surfaceLandmarksGroup.style.opacity = "1";
+    }
+
+    bgImageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        manualPhotoDataUrl = event.target.result;
+        clearBgBtn.classList.remove("hidden");
+        showPhotoLayer(manualPhotoDataUrl);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    clearBgBtn.addEventListener("click", () => {
+      manualPhotoDataUrl = null;
+      clearBgBtn.classList.add("hidden");
+      bgImageInput.value = "";
+      updatePatientModelVisuals();
+    });
+
+    landmarkOpacity.addEventListener("input", (e) => {
+      surfaceLandmarksGroup.style.opacity = e.target.value / 100;
+    });
+
+    torsoContainer.addEventListener("mousemove", (e) => {
+      const rect = torsoContainer.getBoundingClientRect();
+      const x = (((e.clientX - rect.left) / rect.width) * 100).toFixed(1);
+      const y = (((e.clientY - rect.top) / rect.height) * 100).toFixed(1);
+      coordDisplay.textContent = `Hover torso: X: ${x}% | Y: ${y}%`;
+    });
+
+    coordToggle.addEventListener("change", (e) => coordDisplay.classList.toggle("hidden", !e.target.checked));
+    vesselToggle.addEventListener("change", (e) => epigastricVessels.classList.toggle("hidden", !e.target.checked));
+    organToggle.addEventListener("change", (e) => targetOrgansLayer.classList.toggle("hidden", !e.target.checked));
+    triangulationToggle.addEventListener("change", () => render());
+
+    function updateTargetOrganVisibility(isBlindedExam) {
+      if (isBlindedExam) {
+        targetOrgansLayer.classList.add("hidden");
+        return;
+      }
+      targetOrgansLayer.classList.toggle("hidden", !organToggle.checked);
+      Object.values(procedures).forEach(proc => {
+        const el = document.getElementById(proc.organElementId);
+        if (el) el.classList.add("hidden");
+      });
+      const activeOrganEl = document.getElementById(procedures[currentProcedureKey].organElementId);
+      if (activeOrganEl) activeOrganEl.classList.remove("hidden");
+    }
+
+    function calculateManipulationAngle(target, portA, portB) {
+      if (!portA || !portB) return 0;
+      const tx = target.x * 4, ty = target.y * 5;
+      const ax = portA.x * 4, ay = portA.y * 5;
+      const bx = portB.x * 4, by = portB.y * 5;
+
+      const v1x = ax - tx, v1y = ay - ty;
+      const v2x = bx - tx, v2y = by - ty;
+      const dot = v1x * v2x + v1y * v2y;
+      const mag1 = Math.hypot(v1x, v1y);
+      const mag2 = Math.hypot(v2x, v2y);
+      if (mag1 === 0 || mag2 === 0) return 0;
+
+      const cosTheta = Math.max(-1, Math.min(1, dot / (mag1 * mag2)));
+      return Math.round((Math.acos(cosTheta) * 180) / Math.PI);
+    }
+
+    function drawTriangulation(activePorts, proc, isBlindedExam) {
+      if (isBlindedExam || !triangulationToggle.checked) {
+        angleBadge.classList.add("hidden");
+        return;
+      }
+
+      const target = proc.target;
+      const tx = target.x * 4, ty = target.y * 5;
+      const { cameraIdx, workingIndices, assistIdx } = proc.triangulation;
+
+      if (activePorts[cameraIdx]) {
+        const cam = activePorts[cameraIdx];
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", cam.x * 4);
+        line.setAttribute("y1", cam.y * 5);
+        line.setAttribute("x2", tx);
+        line.setAttribute("y2", ty);
+        line.setAttribute("stroke", "#fb7185");
+        line.setAttribute("stroke-width", "2");
+        line.setAttribute("stroke-dasharray", "6,4");
+        linesLayer.appendChild(line);
+      }
+
+      const [w1Idx, w2Idx] = workingIndices;
+      if (activePorts[w1Idx]) {
+        const p1 = activePorts[w1Idx];
+        const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line1.setAttribute("x1", p1.x * 4);
+        line1.setAttribute("y1", p1.y * 5);
+        line1.setAttribute("x2", tx);
+        line1.setAttribute("y2", ty);
+        line1.setAttribute("stroke", "#38bdf8");
+        line1.setAttribute("stroke-width", "2.5");
+        linesLayer.appendChild(line1);
+      }
+
+      if (activePorts[w2Idx]) {
+        const p2 = activePorts[w2Idx];
+        const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line2.setAttribute("x1", p2.x * 4);
+        line2.setAttribute("y1", p2.y * 5);
+        line2.setAttribute("x2", tx);
+        line2.setAttribute("y2", ty);
+        line2.setAttribute("stroke", "#38bdf8");
+        line2.setAttribute("stroke-width", "2.5");
+        linesLayer.appendChild(line2);
+      }
+
+      if (assistIdx !== null && activePorts[assistIdx]) {
+        const pa = activePorts[assistIdx];
+        const lineA = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineA.setAttribute("x1", pa.x * 4);
+        lineA.setAttribute("y1", pa.y * 5);
+        lineA.setAttribute("x2", tx);
+        lineA.setAttribute("y2", ty);
+        lineA.setAttribute("stroke", "#fbbf24");
+        lineA.setAttribute("stroke-width", "1.5");
+        lineA.setAttribute("stroke-dasharray", "3,3");
+        linesLayer.appendChild(lineA);
+      }
+
+      if (activePorts[w1Idx] && activePorts[w2Idx]) {
+        const angle = calculateManipulationAngle(target, activePorts[w1Idx], activePorts[w2Idx]);
+        angleBadge.classList.remove("hidden");
+        const isErgonomic = angle >= 45 && angle <= 75;
+        angleBadge.textContent = `Working Angle: ${angle}° ${isErgonomic ? '(Optimal ~60°)' : '(Ideal: 45–75°)'}`;
+        angleBadge.className = `absolute top-4 right-4 bg-slate-900/90 border font-mono text-xs px-3 py-1.5 rounded-md z-30 pointer-events-none shadow ${
+          isErgonomic ? 'border-emerald-500/60 text-emerald-300' : 'border-amber-500/60 text-amber-300'
+        }`;
+      } else {
+        angleBadge.classList.add("hidden");
+      }
+    }
+
+    studyModeBtn.addEventListener("click", () => setMode("study"));
+    practiceModeBtn.addEventListener("click", () => setMode("practice"));
+    
+    procedureSelect.addEventListener("change", (e) => {
+      currentProcedureKey = e.target.value;
+      resetPractice();
+      if (workflowStage === "walkthrough") updateWalkthroughUI();
+      render();
+    });
+
+    patientModelSelect.addEventListener("change", (e) => {
+      currentPatientModelKey = e.target.value;
+      resetPractice();
+      updatePatientModelVisuals();
+      render();
+    });
+
+    function setMode(mode) {
+      currentMode = mode;
+      if (mode === "study") {
+        studyModeBtn.className = "py-2 px-4 rounded-lg text-sm font-semibold transition bg-emerald-600 text-white shadow";
+        practiceModeBtn.className = "py-2 px-4 rounded-lg text-sm font-semibold transition text-slate-400 hover:text-white";
+        studyPanel.classList.remove("hidden");
+        practicePanel.classList.add("hidden");
+      } else {
+        practiceModeBtn.className = "py-2 px-4 rounded-lg text-sm font-semibold transition bg-emerald-600 text-white shadow";
+        studyModeBtn.className = "py-2 px-4 rounded-lg text-sm font-semibold transition text-slate-400 hover:text-white";
+        studyPanel.classList.add("hidden");
+        practicePanel.classList.remove("hidden");
+        resetPractice();
+      }
+      render();
+    }
+
+    torsoContainer.addEventListener("click", (e) => {
+      if (currentMode !== "practice" || isEvaluated) return;
+      const activePorts = getActiveIdealPorts();
+      if (userPlacements.length >= activePorts.length) return;
+
+      const rect = torsoContainer.getBoundingClientRect();
+      const x = parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(1));
+      const y = parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(1));
+
+      userPlacements.push({ x, y });
+      render();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      resetPractice();
+      render();
+    });
+
+    function resetPractice() {
+      userPlacements = [];
+      isEvaluated = false;
+      resultsBox.classList.add("hidden");
+      resultsBox.innerHTML = "";
+      currentPromptBox.classList.remove("hidden");
+      examActionBtn.disabled = true;
+    }
+
+    function evaluateSandboxPlacements() {
+      isEvaluated = true;
+      examActionBtn.disabled = true;
+      currentPromptBox.classList.add("hidden");
+      render();
+
+      const activePorts = getActiveIdealPorts();
+      const res = computeProcedureResult(currentProcedureKey, userPlacements);
+
+      let html = `<div class="text-xs font-bold text-white mb-2">Sandbox Placement Breakdown:</div>`;
+      activePorts.forEach((idealPort, i) => {
+        const userPort = userPlacements[i];
+        const dist = Math.hypot(idealPort.x - userPort.x, idealPort.y - userPort.y);
+        const badge = dist <= 5 ? "Spot On" : dist <= 10 ? "Acceptable" : "Off-Target";
+        const color = dist <= 5 ? "text-emerald-400" : dist <= 10 ? "text-amber-400" : "text-rose-400";
+        html += `
+          <div class="bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex justify-between items-center text-xs">
+            <span>${i + 1}. ${idealPort.name} (Error: ${dist.toFixed(1)}%)</span>
+            <span class="font-bold ${color}">${badge}</span>
+          </div>
+        `;
+      });
+
+      resultsBox.innerHTML = `
+        <div class="bg-slate-900 border border-slate-600 rounded-xl p-3 flex justify-between items-center">
+          <span class="text-xs font-bold text-slate-300">Sandbox Accuracy: ${res.accuracy}%</span>
+          <span class="text-xs font-mono text-sky-400">Angle θ = ${res.angle}°</span>
+        </div>
+        ${html}
+      `;
+      resultsBox.classList.remove("hidden");
+    }
+
+    function createPortMarker(x, y, size, label, tooltipHtml, isUser = false) {
+      const marker = document.createElement("div");
+      const is10mm = size === "10mm";
+      let colorClasses = is10mm
+        ? "w-6 h-6 bg-rose-500 border-2 border-white text-white"
+        : "w-4 h-4 bg-amber-400 border-2 border-white text-slate-900";
+
+      if (isUser) {
+        colorClasses = "w-5 h-5 bg-emerald-400 border-2 border-slate-900 text-slate-950";
+      }
+
+      marker.className = `port-marker absolute rounded-full flex items-center justify-center text-[10px] font-bold shadow-lg pointer-events-auto cursor-pointer group ${colorClasses}`;
+      marker.style.left = `${x}%`;
+      marker.style.top = `${y}%`;
+      marker.style.transform = "translate(-50%, -50%)";
+      marker.innerHTML = `
+        <span>${label}</span>
+        <div class="hidden group-hover:block absolute bottom-full mb-2 w-56 bg-slate-950/95 text-slate-100 text-xs p-3 rounded-xl border border-slate-600 shadow-2xl pointer-events-none z-50 left-1/2 -translate-x-1/2">
+          ${tooltipHtml}
+        </div>
+      `;
+      return marker;
+    }
+
+    function render() {
+      const proc = procedures[currentProcedureKey];
+      const activePorts = getActiveIdealPorts();
+      const isBlindedExam = workflowStage === "pretest" || workflowStage === "posttest";
+
+      procedureSummary.textContent = proc.summary;
+      portsLayer.innerHTML = "";
+      linesLayer.innerHTML = "";
+
+      updateTargetOrganVisibility(isBlindedExam);
+
+      if (currentMode === "study") {
+        drawTriangulation(activePorts, proc, false);
+
+        activePorts.forEach((port, idx) => {
+          const tooltip = `
+            <div class="font-bold text-emerald-400 mb-1">${idx + 1}. ${port.name} (${port.size})</div>
+            <div class="text-slate-300 mb-1">${port.function}</div>
+            <div class="text-[10px] text-slate-400 font-mono">Landmark: ${port.landmark}</div>
+          `;
+          portsLayer.appendChild(createPortMarker(port.x, port.y, port.size, idx + 1, tooltip, false));
+        });
+
+        portList.innerHTML = activePorts.map((port, idx) => `
+          <div class="bg-slate-900/70 border border-slate-700/80 rounded-xl p-3.5">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-sm text-white">${idx + 1}. ${port.name}</span>
+              <span class="text-xs font-bold px-2 py-0.5 rounded ${port.size === '10mm' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-amber-400/20 text-amber-300 border border-amber-400/30'}">${port.size}</span>
+            </div>
+            <p class="text-xs text-slate-300 mb-1.5">${port.function}</p>
+            <p class="text-[11px] text-slate-400"><strong class="text-slate-300">Landmark:</strong> ${port.landmark}</p>
+          </div>
+        `).join("");
+
+      } else {
+        drawTriangulation(userPlacements, proc, isBlindedExam);
+
+        placementCounter.textContent = `${userPlacements.length} / ${activePorts.length} placed`;
+
+        if (userPlacements.length < activePorts.length) {
+          const nextPort = activePorts[userPlacements.length];
+          
+          // NEW: Select name based on testing state
+          const displayName = (isBlindedExam && nextPort.testName) ? nextPort.testName : nextPort.name;
+          
+          currentPortPrompt.textContent = `${userPlacements.length + 1}. ${displayName} (${nextPort.size})`;
+          currentPortHint.textContent = `Function: ${nextPort.function}`;
+          examActionBtn.disabled = true;
+        } else if (!isEvaluated) {
+          currentPortPrompt.textContent = "All ports placed for this procedure!";
+          currentPortHint.textContent = isBlindedExam
+            ? "Click the green button below to lock in your placements and continue."
+            : "Click 'Evaluate Placement' below to check your accuracy.";
+          examActionBtn.disabled = false;
+        }
+
+        userPlacements.forEach((uPort, idx) => {
+          const targetPort = activePorts[idx];
+          
+          // NEW: Obscure the tooltip name on already placed ports during exams
+          const displayName = (isBlindedExam && targetPort.testName) ? targetPort.testName : targetPort.name;
+          
+          const tooltip = `
+            <div class="font-bold text-emerald-400">Placed Port #${idx + 1}</div>
+            <div class="text-slate-300">${displayName} (${targetPort.size})</div>
+          `;
+          portsLayer.appendChild(createPortMarker(uPort.x, uPort.y, targetPort.size, idx + 1, tooltip, true));
+        });
+
+        if (isEvaluated && workflowStage === "sandbox") {
+          activePorts.forEach((idealPort, idx) => {
+            const uPort = userPlacements[idx];
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", uPort.x * 4);
+            line.setAttribute("y1", uPort.y * 5);
+            line.setAttribute("x2", idealPort.x * 4);
+            line.setAttribute("y2", idealPort.y * 5);
+            line.setAttribute("stroke", "#94a3b8");
+            line.setAttribute("stroke-width", "1.5");
+            line.setAttribute("stroke-dasharray", "3,3");
+            linesLayer.appendChild(line);
+
+            const tooltip = `<div class="font-bold text-amber-300">Ideal: ${idealPort.name}</div>`;
+            portsLayer.appendChild(createPortMarker(idealPort.x, idealPort.y, idealPort.size, idx + 1, tooltip, false));
+          });
+        }
+      }
+    }
+
+// =========================================================================
+    // 8. ANONYMOUS FEEDBACK ENGINE
+    // =========================================================================
+    const ANON_FEEDBACK_DB_KEY = "lapport_anon_feedback_v1";
+
+    // Submit Feedback (Student Side)
+    document.getElementById("submitAnonFeedbackBtn").addEventListener("click", () => {
+      const comments = document.getElementById("anonFeedbackText").value.trim();
+      const rating = document.getElementById("anonFeedbackRating").value;
+
+      if (!comments && rating === "5") {
+        alert("Please leave a brief comment before submitting.");
+        return;
+      }
+
+      const feedbackObj = {
+        date: new Date().toLocaleDateString(),
+        rating: parseInt(rating, 10),
+        comments: comments
+      };
+
+      const list = JSON.parse(localStorage.getItem(ANON_FEEDBACK_DB_KEY)) || [];
+      list.push(feedbackObj);
+      localStorage.setItem(ANON_FEEDBACK_DB_KEY, JSON.stringify(list));
+
+      const btn = document.getElementById("submitAnonFeedbackBtn");
+      btn.disabled = true;
+      btn.classList.add("opacity-50", "cursor-not-allowed");
+      btn.textContent = "Submitted ✓";
+      document.getElementById("feedbackSuccessMsg").classList.remove("hidden");
+    });
+
+    // Render Feedback Table (Teacher Side)
+    function renderFeedbackDashboard() {
+      const list = JSON.parse(localStorage.getItem(ANON_FEEDBACK_DB_KEY)) || [];
+      const tbody = document.getElementById("feedbackTableBody");
+      
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-slate-500 italic">No feedback submitted yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(f => {
+        const stars = '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating);
+        return `
+          <tr class="hover:bg-slate-900/60 transition">
+            <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">${f.date}</td>
+            <td class="py-3 px-3 font-bold text-amber-400 text-sm tracking-widest">${stars}</td>
+            <td class="py-3 px-3 text-slate-300 leading-relaxed whitespace-pre-wrap">${f.comments}</td>
+          </tr>
+        `;
+      }).reverse().join("");
+    }
+
+    // Export Anonymous Feedback to CSV
+    document.getElementById("exportFeedbackCsvBtn").addEventListener("click", () => {
+      const list = JSON.parse(localStorage.getItem(ANON_FEEDBACK_DB_KEY)) || [];
+      if (list.length === 0) return alert("No feedback available to export.");
+
+      const headers = ["Date", "Star_Rating_1_to_5", "Anonymous_Comments"];
+      
+      const rows = list.map(f => {
+        const safeComments = (f.comments || "").replace(/"/g, '""');
+        return `"${f.date}",${f.rating},"${safeComments}"`;
+      });
+
+      const csv = [headers.join(","), ...rows].join("\r\n");
+      const dateStr = new Date().toISOString().slice(0, 10);
+      
+      // Re-use the existing file download helper
+      triggerFileDownload(csv, `LapPort_Anonymous_Feedback_${dateStr}.csv`);
+    });
+
+    // Initialize Everything cleanly on page load
+    updatePatientModelVisuals();
+    updateTheorySandbox();
+    updateOrDiagram();
+    renderTheoryQuiz();
+    render();
+    // Initialize the quiz immediately
+    if (typeof renderTheoryQuiz === "function") {
+        renderTheoryQuiz();
+    }
+  </script>
+</body>
+</html>
